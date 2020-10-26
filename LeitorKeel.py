@@ -14,6 +14,7 @@ class LeitorKeel:
             elif line.__contains__("["):
                 universe = line.split("[")
                 interval = universe[1].split("]")[0].replace(" ", "").split(",")
+                interval = [float(val) for val in interval]
                 self.inputs[universe[0].split(" ")[1]] = interval
             elif line.__contains__("{"):
                 label = line.split("{")[1].split("}")[0].replace(" ", "").split(",")
