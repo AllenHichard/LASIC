@@ -9,4 +9,5 @@ for dir in paths_treino:
     #obj_reader.__str__()
     teste.criarConjuntos(obj_reader.inputs)
     teste.criarRegrasWangMendel(obj_reader.data)
+    teste.classificar(obj_reader.data)
 

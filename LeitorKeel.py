@@ -19,17 +19,19 @@ class LeitorKeel:
             elif line.__contains__("{"):
                 label = line.split("{")[1].split("}")[0].replace(" ", "").split(",")
                 for index in range(len(label)):
-                    self.output[label[index]] = index
+                    self.output[label[index]] = -(index + 1)
             elif line.__contains__("data"):
                 self.instancias()
 
     def instancias(self):
         for line in self.file:
-            sample = line.replace(" ", "").split("\n")[0].split(",")
-            rotulo = sample.__getitem__(len(sample)-1)
+            instancia_completa = line.replace(" ", "").split("\n")[0].split(",")
+            instancia_atributos = [float(val) for val in instancia_completa[:len(instancia_completa)-1]]
+            rotulo = instancia_completa.__getitem__(len(instancia_completa)-1)
             idRotulo = self.output[rotulo]
-            sample[len(sample)-1] = idRotulo
-            self.data.append(sample)
+            instancia_atributos.append(idRotulo)
+            instancia_completa = instancia_atributos.copy()
+            self.data.append(instancia_completa)
 
     def __str__(self):
         print("Nome do dataset = {}\nEntradas = {}\nSaída = {}\n".format(self.relation, self.inputs, self.output))
