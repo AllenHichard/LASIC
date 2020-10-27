@@ -15,7 +15,8 @@ class LeitorKeel:
     def cabecalho(self):
         for line in self.file:
             if line.__contains__("relation"):
-                self.relation = line.split(" ")[1].split("\n")[0]
+                listLine = line.split(" ")
+                self.relation = listLine[len(listLine)-1].split("\n")[0]
             elif line.__contains__("["):
                 universe = line.split("[")
                 interval = universe[1].split("]")[0].replace(" ", "").split(",")

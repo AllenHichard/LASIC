@@ -15,7 +15,7 @@ def classificar(conjuntos_de_entradas_fuzzy, particoes_entradas, regras, instanc
                 nível_ativado = regra[i]-1
                 grau = fuzz.interp_membership(particoes_entradas[i], conjuntos_de_entradas_fuzzy[i][nível_ativado], valor)
                 graus_pertinencias.append(grau)
-            tnorma = np.min(graus_pertinencias)
+            tnorma = np.min(graus_pertinencias) #mudar a composição com um if (min, max, prod)
             if  tnorma > maiorPertinencia:
                 maiorPertinencia = tnorma
                 classe = regra[len(regra)-1]

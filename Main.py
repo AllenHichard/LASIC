@@ -7,10 +7,11 @@ paths_treino = ltr.datasets("tra")
 paths_teste = ltr.datasets("tst")
 
 for dirTreino, dirTeste in zip(paths_treino, paths_teste):
-
     #Treinamento
     obj_reader = reader.LeitorKeel(dirTreino)
     obj_reader.cabecalho()
+    #print(obj_reader.relation)
+    #obj_reader.__str__()
 
     base_de_dados = BaseDados.BaseDados()
     base_de_regras = BaseRegras.BaseRegras()

@@ -1,6 +1,6 @@
 import os
 
-caminhoDatasets = os.getcwd()+"/dataset"
+caminhoDatasets = os.getcwd()+"/datasets"
 def datasets(treino_teste):
     """
         Esse método retorna todos os caminhos dos arquivos que contém os datasets do repositório KEEL

@@ -34,9 +34,12 @@ class BaseRegras:
             elif self.t_norma_das_regras[index] < tnorma:
                 self.regras.__setitem__(index, regra)
                 self.t_norma_das_regras.__setitem__(index, tnorma)
+        for regra in self.regras:
+            #print(regra)
+            pass
 
     def inconsistencia(self, regras, regra):
         for i, r in enumerate(regras):
-            if r[:4] == regra[:4]:
+            if r[:len(r)-1] == regra[:len(regra)-1]:
                 return False, i  # calcula t norma
         return True, -1
