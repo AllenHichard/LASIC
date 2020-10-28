@@ -1,6 +1,7 @@
 import numpy as np
 import skfuzzy as fuzz
 
+
 class BaseRegras:
 
     def __init__(self):
@@ -27,13 +28,15 @@ class BaseRegras:
                 lista_maiores_pertinencias.append(max(pertinencias))
             regra.append(classe)
             (cond, index) = self.inconsistencia(self.regras, regra)
-            tnorma = np.prod(lista_maiores_pertinencias)
-            if cond:
+            tnorma = np.prod(lista_maiores_pertinencias) # tnorma prod, max, min
+            if cond and tnorma > 0:
                 self.regras.append(regra)
-                self.t_norma_das_regras.append(tnorma)  # tnorma soma
-            elif self.t_norma_das_regras[index] < tnorma:
+                self.t_norma_das_regras.append(tnorma)
+            elif self.t_norma_das_regras[index] < tnorma and tnorma > 0:
                 self.regras.__setitem__(index, regra)
                 self.t_norma_das_regras.__setitem__(index, tnorma)
+
+        #print(len(self.regras))
         for regra in self.regras:
             #print(regra)
             pass
@@ -41,5 +44,6 @@ class BaseRegras:
     def inconsistencia(self, regras, regra):
         for i, r in enumerate(regras):
             if r[:len(r)-1] == regra[:len(regra)-1]:
+                #return True, -1
                 return False, i  # calcula t norma
         return True, -1

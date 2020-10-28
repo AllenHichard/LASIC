@@ -1,6 +1,6 @@
 import numpy as np
 import skfuzzy as fuzz
-
+import matplotlib.pyplot as plt
 
 class BaseDados:
 
@@ -17,13 +17,22 @@ class BaseDados:
     def criarConjuntos(self, atributos):
         for atributo in atributos:
             (inicio, fim) = atributos[atributo]
-            fim = fim+0.1
-            eixo_x = np.arange(inicio, fim, (fim - inicio) / 100)
+            #fim = fim
+
+            fim = 1.08*fim
+            inicio = 0.92*inicio
+            eixo_x = np.arange(inicio, fim, (fim - inicio) / 1000)
             centroide = (inicio+fim)/2
             #essa variavel armazena a quantidade que deve ser somada ao ponto inicial e definir o ponto médio do trapézio
             passos_centros = (fim-inicio)/4
+            #inicio = inicio - 2
+            #fim = fim + 2
             baixo = fuzz.trapmf(eixo_x, [inicio, inicio, inicio+passos_centros, centroide])
             medio = fuzz.trimf(eixo_x, [inicio+passos_centros, centroide, fim-passos_centros])
             alto = fuzz.trapmf(eixo_x, [centroide, fim-passos_centros, fim, fim])
             self.conjuntos_de_entradas_fuzzy.append([baixo, medio, alto])
             self.particoes_entradas.append(eixo_x)
+            #plt.plot(eixo_x, baixo, 'b', linewidth=1.5, label='Bad')
+            #plt.plot(eixo_x, medio, 'g', linewidth=1.5, label='Decent')
+            #plt.plot(eixo_x, alto, 'r', linewidth=1.5, label='Great')
+            #plt.show()
