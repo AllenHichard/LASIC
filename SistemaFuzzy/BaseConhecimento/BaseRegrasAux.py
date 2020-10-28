@@ -13,8 +13,7 @@ class BaseRegras:
         return self.regras
 
     def wangMendel(self, conjuntos_de_entradas_fuzzy, particoes_entradas, instancias):
-        for i, instancia in enumerate(instancias):
-
+        for instancia in instancias:
             atributos = instancia.__getAtributos__()
             classe = instancia.__getClasse__()
             regra = []
@@ -30,9 +29,6 @@ class BaseRegras:
             regra.append(classe)
             (cond, index) = self.inconsistencia(self.regras, regra)
             tnorma = np.prod(lista_maiores_pertinencias) # tnorma prod, max, min
-            if tnorma == 0:
-                print(i+1, atributos )
-                print(i+1, lista_maiores_pertinencias)
             if cond and tnorma > 0:
                 self.regras.append(regra)
                 self.t_norma_das_regras.append(tnorma)

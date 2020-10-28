@@ -32,7 +32,7 @@ def classificar(conjuntos_de_entradas_fuzzy, particoes_entradas, regras, instanc
             cout +=1
         else:
             pass
-            #print(iteracao, "Classificou como: ", classe, "| Era pra ser: ", gabarito)
+            print(iteracao, "Classificou como: ", classe, "| Era pra ser: ", gabarito)
     accu = cout/len(instancias)
     return accu
 
