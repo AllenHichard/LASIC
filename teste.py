@@ -14,11 +14,13 @@ def definirDecimal(fim):
 
 
 if type(fim) == type(0.0):
+    n = 100#varia entre 9999 e 10000
+    eixo_x = np.arange(inicio, fim, (fim-inicio)/(n - 1))
+    eixo_x[len(eixo_x)-1] = fim
 
-    eixo_x = np.arange(inicio, fim+definirDecimal(fim))
-    #eixo_x = np.arange(inicio, fim + (fim - inicio) / 1000, (fim - inicio) / 1000)
-    #for i in eixo_x:
-        #print(i)
+    #adicionar no final até completar os pontos
+    for i in eixo_x:
+        print(i)
         #pass
 
 inicio = 10.6
@@ -35,7 +37,7 @@ if type(fim) == type(0.0):
     print((fim-inicio)/1000)
     eixo_x = np.arange(inicio, fim+definirDecimal(fim), definirDecimal(fim))
     for i in eixo_x:
-        print(i)
+        #print(i)
         pass
 
 inicio = 0.0
