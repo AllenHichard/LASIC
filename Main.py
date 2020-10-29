@@ -25,9 +25,9 @@ for dirTreino, dirTeste in zip(paths_treino, paths_teste):
     regras = base_de_regras.__getRegras__()
 
     resultadoTreinamento = Classico.classificar(conjuntos_de_entradas_fuzzy, particoes_entradas, regras, obj_reader.instancias)
-    print(resultadoTreinamento)
+    #print(resultadoTreinamento)
     #Teste
-    #obj_reader_teste = reader.LeitorKeel(dirTeste)
-    #obj_reader_teste.cabecalho()
-    #resultadoTeste = Classico.classificar(conjuntos_de_entradas_fuzzy, particoes_entradas, regras, obj_reader_teste.instancias)
-    #print(resultadoTreinamento, " --- ",resultadoTeste)
+    obj_reader_teste = reader.LeitorKeel(dirTeste)
+    obj_reader_teste.cabecalho()
+    resultadoTeste = Classico.classificar(conjuntos_de_entradas_fuzzy, particoes_entradas, regras, obj_reader_teste.instancias)
+    print(resultadoTreinamento, " --- ",resultadoTeste)

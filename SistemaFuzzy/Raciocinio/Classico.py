@@ -1,17 +1,20 @@
 import numpy as np
 import skfuzzy as fuzz
+from collections import Counter
 
 
 def classificar(conjuntos_de_entradas_fuzzy, particoes_entradas, regras, instancias):
     cout = 0
     iteracao = 0
     dontcare = 0.0
+    classess = [] #apagar
     for instancia in instancias:
         iteracao +=1
         #if iteracao == 19:
         #    print(instancia.__getAtributos__(), instancia.__getClasse__())
         atributos = instancia.__getAtributos__()
         gabarito = instancia.__getClasse__()
+        classess.append(gabarito)
         classe = 0
         maiorPertinencia = 0
         for regra in regras:
@@ -32,8 +35,9 @@ def classificar(conjuntos_de_entradas_fuzzy, particoes_entradas, regras, instanc
             cout +=1
         else:
             pass
-            print(iteracao, "Classificou como: ", classe, "| Era pra ser: ", gabarito)
+            #print(iteracao, "Classificou como: ", classe, "| Era pra ser: ", gabarito)
     accu = cout/len(instancias)
+    print(dict(Counter(classess)))
     return accu
 
 """
