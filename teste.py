@@ -14,7 +14,7 @@ def definirDecimal(fim):
 
 
 if type(fim) == type(0.0):
-    n = 100#varia entre 9999 e 10000
+    n = 1000#varia entre 9999 e 10000
     eixo_x = np.arange(inicio, fim, (fim-inicio)/(n - 1))
     eixo_x[len(eixo_x)-1] = fim
 

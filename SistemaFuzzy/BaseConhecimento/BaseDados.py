@@ -17,7 +17,9 @@ class BaseDados:
     def criarConjuntos(self, atributos):
         for atributo in atributos:
             (inicio, fim) = atributos[atributo]
-            eixo_x = np.arange(inicio, fim, 0.001)
+            n = 1000  # varia entre 9999 e 10000
+            eixo_x = np.arange(inicio, fim, (fim - inicio) / (n - 1))
+            eixo_x[len(eixo_x) - 1] = fim
             centroide = (inicio+fim)/2
             #essa variavel armazena a quantidade que deve ser somada ao ponto inicial e definir o ponto médio do trapézio
             passos_centros = (fim-inicio)/4
