@@ -14,7 +14,6 @@ class BaseRegras:
 
     def wangMendel(self, conjuntos_de_entradas_fuzzy, particoes_entradas, instancias):
         for i, instancia in enumerate(instancias):
-
             atributos = instancia.__getAtributos__()
             classe = instancia.__getClasse__()
             regra = []
@@ -41,9 +40,9 @@ class BaseRegras:
                 self.t_norma_das_regras.__setitem__(index, tnorma)
 
         #print(len(self.regras))
-        for regra in self.regras:
+        #for regra in self.regras:
             #print(regra)
-            pass
+        #    pass
 
     def inconsistencia(self, regras, regra):
         for i, r in enumerate(regras):

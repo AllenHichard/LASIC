@@ -23,8 +23,6 @@ class BaseDados:
             centroide = (inicio+fim)/2
             #essa variavel armazena a quantidade que deve ser somada ao ponto inicial e definir o ponto médio do trapézio
             passos_centros = (fim-inicio)/4
-            #inicio = inicio - 2
-            #fim = fim + 2
             baixo = fuzz.trapmf(eixo_x, [inicio, inicio, inicio+passos_centros, centroide])
             medio = fuzz.trimf(eixo_x, [inicio+passos_centros, centroide, fim-passos_centros])
             alto = fuzz.trapmf(eixo_x, [centroide, fim-passos_centros, fim, fim])
