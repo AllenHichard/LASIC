@@ -20,6 +20,7 @@ def classificar(conjuntos_de_entradas_fuzzy, particoes_entradas, regras, instanc
             if  tnorma > maiorPertinencia:
                 maiorPertinencia = tnorma
                 classe = regra[len(regra)-1]
+        #print(classe, gabarito)
         if classe == gabarito:
             acertos +=1
         else:

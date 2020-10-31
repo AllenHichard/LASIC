@@ -1,6 +1,6 @@
 from collections import Counter
-class Balanceamento:
 
+class Balanceamento:
     def __init__(self):
         self.classes = []
 
@@ -9,4 +9,3 @@ class Balanceamento:
 
     def __getBalanceamento__(self):
         print(dict(Counter(self.classes)))
-
