@@ -6,8 +6,7 @@ def classificar(operador_Agregacao, conjuntos_de_entradas_fuzzy, particoes_entra
     ocorrencias = {}
     for output in outputs:
         ocorrencias[outputs[output]] = 0
-    for regra in regras:
-        classeRegra = regra[len(regra) - 1]
+    for classeRegra in regras[1]:
         ocorrencias[classeRegra]+=1
     classeDefault = sorted(ocorrencias, key=ocorrencias.get, reverse=False)[0]
     acertos = 0
@@ -17,15 +16,16 @@ def classificar(operador_Agregacao, conjuntos_de_entradas_fuzzy, particoes_entra
             classificacaoGeral[outputs[output]] = []
         atributos = instancia.__getAtributos__()
         gabarito = instancia.__getClasse__()
-        for regra, peso in zip(regras, pesos):
+        #print(len(regras[0]), len(regras[1]), len(pesos))
+        for antecedentes, classe, peso in zip(regras[0], regras[1], pesos):
+            #print(antecedentes, classe)
             graus_pertinencias = []
             for i, valor in enumerate(atributos):
-                nível_ativado = regra[i]-1
+                nível_ativado = antecedentes[i]-1
                 grau = fuzz.interp_membership(particoes_entradas[i], conjuntos_de_entradas_fuzzy[i][nível_ativado], valor)
                 graus_pertinencias.append(grau)
             tnorma = np.prod(graus_pertinencias)*peso #mudar a composição com um if (min, max, prod)
             if tnorma > 0:
-                classe = regra[len(regra) - 1]
                 classificacaoGeral[classe].append(tnorma)
         classe = getClasse(classificacaoGeral, operador_Agregacao)
         if classe == gabarito:

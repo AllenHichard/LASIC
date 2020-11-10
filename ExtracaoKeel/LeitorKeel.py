@@ -7,6 +7,7 @@ class LeitorKeel:
         self.inputs = {}
         self.output = {}
         self.instancias = []
+        self.centroids = []
         self.file = open(dir, "r")
 
     def __getInstancias__(self):
@@ -21,6 +22,9 @@ class LeitorKeel:
                 universe = line.split("[")
                 interval = universe[1].split("]")[0].replace(" ", "").split(",")
                 interval = [float(val) for val in interval]
+                inicio = interval[0]
+                fim = interval[1]
+                self.centroids.append((inicio + fim) / 2)
                 self.inputs[universe[0].split(" ")[1]] = interval
             elif line.__contains__("{"):
                 label = line.split("{")[1].split("}")[0].replace(" ", "").split(",")

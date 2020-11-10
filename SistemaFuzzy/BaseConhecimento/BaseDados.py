@@ -14,18 +14,17 @@ class BaseDados:
     def __getParticoes__(self):
         return self.particoes_entradas
 
-    def criarConjuntos(self, atributos):
-        for atributo in atributos:
+    def criarConjuntos(self, atributos, centroids):
+        for atributo, centroid in zip(atributos, centroids):
             (inicio, fim) = atributos[atributo]
             n = 1000  # varia entre 9999 e 10000
             eixo_x = np.arange(inicio, fim, (fim - inicio) / (n - 1))
             eixo_x[len(eixo_x) - 1] = fim
-            centroide = (inicio+fim)/2
-            #essa variavel armazena a quantidade que deve ser somada ao ponto inicial e definir o ponto médio do trapézio
-            passos_centros = (fim-inicio)/4
-            baixo = fuzz.trapmf(eixo_x, [inicio, inicio, inicio+passos_centros, centroide])
-            medio = fuzz.trimf(eixo_x, [inicio+passos_centros, centroide, fim-passos_centros])
-            alto = fuzz.trapmf(eixo_x, [centroide, fim-passos_centros, fim, fim])
+            # essa variavel armazena a quantidade que deve ser somada ao ponto inicial e definir o ponto médio do trapézio
+            passos_centros = (fim - inicio) / 4
+            baixo = fuzz.trapmf(eixo_x, [inicio, inicio, inicio+passos_centros, centroid])
+            medio = fuzz.trimf(eixo_x, [inicio+passos_centros, centroid, fim-passos_centros])
+            alto = fuzz.trapmf(eixo_x, [centroid, fim-passos_centros, fim, fim])
             self.conjuntos_de_entradas_fuzzy.append([baixo, medio, alto])
             self.particoes_entradas.append(eixo_x)
             #plt.plot(eixo_x, baixo, 'b', linewidth=1.5, label='Bad')
