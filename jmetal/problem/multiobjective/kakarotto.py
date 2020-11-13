@@ -47,7 +47,7 @@ class MixedIntegerFloatProblem(Problem):
         antecedentes = solution.variables[0].variables
         consequentes = solution.variables[1].variables
         centroides = solution.variables[2].variables
-        #print(solution.variables[0].variables, solution.variables[1].variables, solution.variables[2].variables)
+        print(solution.variables[0].variables, solution.variables[1].variables, solution.variables[2].variables)
         #print(solution.variables[0].variables)
         solution.objectives[0] = 1
         solution.objectives[1] = 1
@@ -71,7 +71,6 @@ class MixedIntegerFloatProblem(Problem):
         points_solution.variables = \
             [random.uniform(self.float_lower_bound_centralPoints[i], self.float_upper_bound_centralPoints[i]) for i in
              range(len(self.float_lower_bound_centralPoints))]
-
 
         return CompositeSolution([attributes_solution, labels_solution, points_solution])
 

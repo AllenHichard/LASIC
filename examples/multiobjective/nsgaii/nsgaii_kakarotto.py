@@ -7,7 +7,7 @@ from jmetal.util.solution import get_non_dominated_solutions, print_function_val
     print_variables_to_file
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
-if __name__ == '__main__':
+def nsgaii_classify():
     problem = MixedIntegerFloatProblem()
 
     max_evaluations = 25000

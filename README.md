@@ -112,9 +112,9 @@ The current release of jMetalPy (v1.5.5) contains the following components:
 * Experiment class for performing studies either alone or alongside [jMetal](https://github.com/jMetal/jMetal).
 * Pairwise and multiple hypothesis testing for statistical analysis, including several frequentist and Bayesian testing methods, critical distance plots and posterior diagrams.
 
-| ![Scatter plot 2D](docs/source/_static/2D.gif) | ![Scatter plot 3D](docs/source/_static/3D.gif) |
+| ![Scatter plot 2D](../docs/source/_static/2D.gif) | ![Scatter plot 3D](../docs/source/_static/3D.gif) |
 |-------------- | ----------------  |
-| ![Parallel coordinates](docs/source/_static/p-c.gif) | ![Interactive chord plot](docs/source/_static/chordplot.gif) |
+| ![Parallel coordinates](../docs/source/_static/p-c.gif) | ![Interactive chord plot](../docs/source/_static/chordplot.gif) |
 
 ## Changelog
 
