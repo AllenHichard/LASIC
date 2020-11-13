@@ -1,6 +1,6 @@
 import random
 from math import sqrt, exp, pow, sin
-
+import Fitness
 from jmetal.core.problem import FloatProblem, BinaryProblem, Problem
 from jmetal.core.solution import FloatSolution, BinarySolution, CompositeSolution, IntegerSolution
 
@@ -11,29 +11,33 @@ from jmetal.core.solution import FloatSolution, BinarySolution, CompositeSolutio
 
 .. moduleauthor:: Antonio J. Nebro <antonio@lcc.uma.es>
 """
-
+import itertools
 
 class MixedIntegerFloatProblem(Problem):
-    def __init__(self):
+    def __init__(self, obj_reader, semente, lower_upper_class, lower_upper_centroids):
         super(MixedIntegerFloatProblem, self).__init__()
-        entradas = [1,2,1,1,2,3,1,2,1,2,2,2]
-        saida = [-3,-2,-1]
-        pontos = [5.8, 8.9, 7.5, 3.8]
+        self.entrada = obj_reader
+        self.isSeed= True
+        self.antecedentes = []
+        for antecedente in semente[0]:
+            self.antecedentes += antecedente
+        self.labels = semente[1]
+        self.centroids = semente[2]
+        lower_label = lower_upper_class[0]
+        upper_label = lower_upper_class[1]
+        number_of_integer_variables_inputs = len(self.antecedentes)
+        number_of_integer_variables_outputs = len(self.labels)
+        number_of_float_variables_centralPoints = len(self.centroids)
+        self.maxAtual = 0
 
-        number_of_integer_variables_inputs = len(entradas)
-        number_of_integer_variables_outputs = len(saida)
-        number_of_float_variables_centralPoints = len(pontos)
-
-        lower_label = saida[0]
-        upper_label = saida[2]
 
         self.number_of_objectives = 2
         self.number_of_variables = 3
         #self.number_of_constraints = 0
 
 
-        self.float_lower_bound_centralPoints = [2 for _ in range(number_of_float_variables_centralPoints)]
-        self.float_upper_bound_centralPoints = [10 for _ in range(number_of_float_variables_centralPoints)]
+        self.float_lower_bound_centralPoints = [lower for lower in lower_upper_centroids[0]]
+        self.float_upper_bound_centralPoints = [upper for upper in lower_upper_centroids[1]]
         self.int_lower_bound_attribute = [1 for _ in range(number_of_integer_variables_inputs)]
         self.int_upper_bound_attribute = [3 for _ in range(number_of_integer_variables_inputs)]
         self.int_lower_bound_label = [lower_label for _ in range(number_of_integer_variables_outputs)]
@@ -47,18 +51,59 @@ class MixedIntegerFloatProblem(Problem):
         antecedentes = solution.variables[0].variables
         consequentes = solution.variables[1].variables
         centroides = solution.variables[2].variables
-        print(solution.variables[0].variables, solution.variables[1].variables, solution.variables[2].variables)
+        #print(solution.variables[0].variables, solution.variables[1].variables, solution.variables[2].variables)
         #print(solution.variables[0].variables)
-        solution.objectives[0] = 1
-        solution.objectives[1] = 1
+        new_antecedentes = list(self.chunks(antecedentes, len(centroides)))
+        acuracia = Fitness.__getFitness__(self.entrada,
+                                          [new_antecedentes,consequentes,centroides],
+                                          [1]*len(antecedentes))
+        if (acuracia > self.maxAtual):
+            self.maxAtual = acuracia
+            print("evolução acc: ", acuracia)
+
+        solution.objectives[0] = acuracia
+        solution.objectives[1] = acuracia
         return solution
 
     def create_solution(self) -> CompositeSolution:
-        attributes_solution = IntegerSolution(self.int_lower_bound_attribute, self.int_upper_bound_attribute, self.number_of_objectives, self.number_of_constraints)
+        if self.isSeed:
+            self.isSeed = False
+            return self.insert_seed()
+        return self.random_solution()
 
-        labels_solution = IntegerSolution(self.int_lower_bound_label, self.int_upper_bound_label, self.number_of_objectives, self.number_of_constraints)
+    def get_name(self) -> str:
+        return "Mixed Integer Float Problem"
 
-        points_solution = FloatSolution(self.float_lower_bound_centralPoints,self.float_upper_bound_centralPoints,self.number_of_objectives, self.number_of_constraints)
+    def chunks(self, lista, n):
+        for i in range(0, len(lista), n):
+            yield lista[i:i + n]
+
+    def insert_seed(self):
+        attributes_solution = IntegerSolution(self.int_lower_bound_attribute, self.int_upper_bound_attribute,
+                                              self.number_of_objectives, self.number_of_constraints)
+
+        labels_solution = IntegerSolution(self.int_lower_bound_label, self.int_upper_bound_label,
+                                          self.number_of_objectives, self.number_of_constraints)
+
+        points_solution = FloatSolution(self.float_lower_bound_centralPoints, self.float_upper_bound_centralPoints,
+                                        self.number_of_objectives, self.number_of_constraints)
+
+        attributes_solution.variables = self.antecedentes
+
+        labels_solution.variables =  self.labels
+
+        points_solution.variables =  self.centroids
+        return CompositeSolution([attributes_solution, labels_solution, points_solution])
+
+    def random_solution(self):
+        attributes_solution = IntegerSolution(self.int_lower_bound_attribute, self.int_upper_bound_attribute,
+                                              self.number_of_objectives, self.number_of_constraints)
+
+        labels_solution = IntegerSolution(self.int_lower_bound_label, self.int_upper_bound_label,
+                                          self.number_of_objectives, self.number_of_constraints)
+
+        points_solution = FloatSolution(self.float_lower_bound_centralPoints, self.float_upper_bound_centralPoints,
+                                        self.number_of_objectives, self.number_of_constraints)
 
         attributes_solution.variables = \
             [random.randint(self.int_lower_bound_attribute[i], self.int_upper_bound_attribute[i]) for i in
@@ -73,7 +118,4 @@ class MixedIntegerFloatProblem(Problem):
              range(len(self.float_lower_bound_centralPoints))]
 
         return CompositeSolution([attributes_solution, labels_solution, points_solution])
-
-    def get_name(self) -> str:
-        return "Mixed Integer Float Problem"
 
