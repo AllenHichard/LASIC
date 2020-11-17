@@ -17,11 +17,12 @@ class MixedIntegerFloatProblem(Problem):
     def __init__(self, obj_reader, semente, lower_upper_class, lower_upper_centroids):
         super(MixedIntegerFloatProblem, self).__init__()
         self.entrada = obj_reader
-        self.isSeed= True
+        self.isSeed= False
         self.antecedentes = []
         for antecedente in semente[0]:
             self.antecedentes += antecedente
         self.labels = semente[1]
+        self.inter = len(self.antecedentes) / len(self.entrada.instancias)
         self.centroids = semente[2]
         lower_label = lower_upper_class[0]
         upper_label = lower_upper_class[1]
@@ -43,7 +44,7 @@ class MixedIntegerFloatProblem(Problem):
         self.int_lower_bound_label = [lower_label for _ in range(number_of_integer_variables_outputs)]
         self.int_upper_bound_label = [upper_label for _ in range(number_of_integer_variables_outputs)]
 
-        self.obj_directions = [self.MINIMIZE]
+        self.obj_directions = [self.MAXIMIZE]
         self.obj_labels = ['Ones']
 
     def evaluate(self, solution: CompositeSolution) -> CompositeSolution:
@@ -54,15 +55,22 @@ class MixedIntegerFloatProblem(Problem):
         #print(solution.variables[0].variables, solution.variables[1].variables, solution.variables[2].variables)
         #print(solution.variables[0].variables)
         new_antecedentes = list(self.chunks(antecedentes, len(centroides)))
-        acuracia = Fitness.__getFitness__(self.entrada,
+        pesos =  [1]*len(antecedentes)
+        #inter = len(new_antecedentes)
+        regras, acuracia = Fitness.__getFitness__(self.entrada,
                                           [new_antecedentes,consequentes,centroides],
-                                          [1]*len(antecedentes))
+                                          pesos)
+        inter = len(regras[0])/len(self.entrada.instancias)
         if (acuracia > self.maxAtual):
             self.maxAtual = acuracia
             print("evolução acc: ", acuracia)
+            print(1, "evolução inter: ", len(regras[0]), inter)
+        if inter < self.inter:
+            self.inter = 1-inter
+            print(2, "evolução inter: ", len(regras[0]) ,self.inter)
 
-        solution.objectives[0] = acuracia
-        solution.objectives[1] = acuracia
+        solution.objectives[0] = self.maxAtual
+        solution.objectives[1] = self.inter
         return solution
 
     def create_solution(self) -> CompositeSolution:

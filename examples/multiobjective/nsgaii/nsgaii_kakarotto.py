@@ -7,14 +7,14 @@ from jmetal.util.solution import get_non_dominated_solutions, print_function_val
     print_variables_to_file
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
-def nsgaii_train(obj_reader, semente, lower_upper_class, lower_upper_centroids):
+def nsgaii_train( obj_reader, semente, lower_upper_class, lower_upper_centroids):
     problem = MixedIntegerFloatProblem(obj_reader, semente, lower_upper_class, lower_upper_centroids)
 
-    max_evaluations = 25000
+    max_evaluations = 100
     algorithm = NSGAII(
         problem=problem,
-        population_size=100,
-        offspring_population_size=100,
+        population_size=10,
+        offspring_population_size=10,
         mutation=CompositeMutation([IntegerPolynomialMutation(0.05, 20),
                                     IntegerPolynomialMutation(0.05, 20),
                                     PolynomialMutation(0.05, 20.0)]),
