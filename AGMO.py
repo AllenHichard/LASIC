@@ -34,7 +34,7 @@ for dirTreino, dirTeste in zip(paths_treino, paths_teste):
     pesos = [1] * len(semente[0])
     objetivo = Fitness.__getFitness__(obj_reader, semente, pesos)
     #lower_upper_inputs(obj_reader.inputs, semente[2])
-    print(objetivo)
+    #print(objetivo)
     nsgaii.nsgaii_train(obj_reader, semente, lower_upper_class(obj_reader.output), lower_upper_centroids(obj_reader.inputs, semente[2]) )
 
 

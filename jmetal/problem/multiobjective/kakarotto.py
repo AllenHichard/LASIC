@@ -18,6 +18,7 @@ class MixedIntegerFloatProblem(Problem):
         super(MixedIntegerFloatProblem, self).__init__()
         self.entrada = obj_reader
         self.isSeed= False
+        self.interacao = 1
         self.antecedentes = []
         for antecedente in semente[0]:
             self.antecedentes += antecedente
@@ -44,11 +45,14 @@ class MixedIntegerFloatProblem(Problem):
         self.int_lower_bound_label = [lower_label for _ in range(number_of_integer_variables_outputs)]
         self.int_upper_bound_label = [upper_label for _ in range(number_of_integer_variables_outputs)]
 
-        self.obj_directions = [self.MAXIMIZE]
+        self.obj_directions = [self.MINIMIZE]
         self.obj_labels = ['Ones']
 
     def evaluate(self, solution: CompositeSolution) -> CompositeSolution:
 
+        if self.interacao % 1000 == 0:
+            print(self.interacao)
+        self.interacao += 1
         antecedentes = solution.variables[0].variables
         consequentes = solution.variables[1].variables
         centroides = solution.variables[2].variables
@@ -61,16 +65,16 @@ class MixedIntegerFloatProblem(Problem):
                                           [new_antecedentes,consequentes,centroides],
                                           pesos)
         inter = len(regras[0])/len(self.entrada.instancias)
-        if (acuracia > self.maxAtual):
+        """if (acuracia > self.maxAtual):
             self.maxAtual = acuracia
             print("evolução acc: ", acuracia)
             print(1, "evolução inter: ", len(regras[0]), inter)
         if inter < self.inter:
             self.inter = 1-inter
-            print(2, "evolução inter: ", len(regras[0]) ,self.inter)
+            print(2, "evolução inter: ", len(regras[0]) ,self.inter)"""
 
-        solution.objectives[0] = self.maxAtual
-        solution.objectives[1] = self.inter
+        solution.objectives[0] = -acuracia
+        solution.objectives[1] = -inter
         return solution
 
     def create_solution(self) -> CompositeSolution:
