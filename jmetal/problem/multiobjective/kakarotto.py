@@ -17,7 +17,7 @@ class MixedIntegerFloatProblem(Problem):
     def __init__(self, obj_reader, semente, lower_upper_class, lower_upper_centroids):
         super(MixedIntegerFloatProblem, self).__init__()
         self.entrada = obj_reader
-        self.isSeed= False
+        self.isSeed= True
         self.interacao = 1
         self.antecedentes = []
         for antecedente in semente[0]:
@@ -64,17 +64,20 @@ class MixedIntegerFloatProblem(Problem):
         regras, acuracia = Fitness.__getFitness__(self.entrada,
                                           [new_antecedentes,consequentes,centroides],
                                           pesos)
-        inter = len(regras[0])/len(self.entrada.instancias)
-        """if (acuracia > self.maxAtual):
+        interTemp = 1 - len(regras[0])/len(self.entrada.instancias)
+        #print(acuracia, interTemp)
+        if (acuracia > self.maxAtual):
             self.maxAtual = acuracia
-            print("evolução acc: ", acuracia)
-            print(1, "evolução inter: ", len(regras[0]), inter)
-        if inter < self.inter:
-            self.inter = 1-inter
-            print(2, "evolução inter: ", len(regras[0]) ,self.inter)"""
+            self.inter = interTemp
+            print(1, "evolução acc: ", acuracia)
+            print(1, "evolução inter: ", len(regras[0]) ,self.inter)
+        if interTemp > self.inter:
+            self.inter = interTemp
+            print(2, "evolução acc: ", acuracia)
+            print(2, "evolução inter: ", len(regras[0]) ,self.inter)
 
         solution.objectives[0] = -acuracia
-        solution.objectives[1] = -inter
+        solution.objectives[1] = -interTemp
         return solution
 
     def create_solution(self) -> CompositeSolution:

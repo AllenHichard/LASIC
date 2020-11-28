@@ -1,21 +1,23 @@
 import numpy as np
 import skfuzzy as fuzz
+from Metricas import Objetivos as obj
 
 
 def classificar(operador_Agregacao, conjuntos_de_entradas_fuzzy, particoes_entradas, regras, pesos, instancias, outputs):
+    resultados = []
+    gabarito = []
     ocorrencias = {}
     for output in outputs:
         ocorrencias[outputs[output]] = 0
     for classeRegra in regras[1]:
         ocorrencias[classeRegra]+=1
     classeDefault = sorted(ocorrencias, key=ocorrencias.get, reverse=False)[0]
-    acertos = 0
     for instancia in instancias:
         classificacaoGeral = {}
         for output in outputs:
             classificacaoGeral[outputs[output]] = []
         atributos = instancia.__getAtributos__()
-        gabarito = instancia.__getClasse__()
+        gabarito.append(instancia.__getClasse__())
         #print(len(regras[0]), len(regras[1]), len(pesos))
         for antecedentes, classe, peso in zip(regras[0], regras[1], pesos):
             #print(antecedentes, classe)
@@ -28,15 +30,9 @@ def classificar(operador_Agregacao, conjuntos_de_entradas_fuzzy, particoes_entra
             if tnorma > 0:
                 classificacaoGeral[classe].append(tnorma)
         classe = getClasse(classificacaoGeral, operador_Agregacao)
-        if classe == gabarito:
-                acertos += 1
-        else:
-            if classe == 0 and gabarito == classeDefault:
-                acertos += 1
-                classe = classeDefault
-            #print("Classificou como: ", classe, "| Era pra ser: ", gabarito)
-    acuracia = acertos / len(instancias)
-    return acuracia
+        if classe == 0: classe = classeDefault
+        resultados.append(classe)
+    return obj.Objetivos().__getAcuraciaDatasetBalanceado__(resultados, gabarito)
 
 def getClasse(classificacaoGeral, operador_Agregacao):
     maiorPertinencia = 0

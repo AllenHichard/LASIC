@@ -1,4 +1,3 @@
-
 class Objetivos:
 
     def __init__(self):

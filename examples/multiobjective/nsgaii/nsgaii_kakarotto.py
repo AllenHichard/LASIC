@@ -10,7 +10,7 @@ from jmetal.util.termination_criterion import StoppingByEvaluations
 def nsgaii_train( obj_reader, semente, lower_upper_class, lower_upper_centroids):
     problem = MixedIntegerFloatProblem(obj_reader, semente, lower_upper_class, lower_upper_centroids)
 
-    max_evaluations = 25000
+    max_evaluations = 10000
     algorithm = NSGAII(
         problem=problem,
         population_size=100,
