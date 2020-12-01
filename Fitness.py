@@ -5,7 +5,7 @@ from SistemaFuzzy.Raciocinio import Geral
 import Reducao_Regras as red
 
 
-def __getFitness__(obj_reader, cromossomo, pesos):
+def __getFitness__(obj_reader, cromossomo, pesos, agregacao,composicao):
     (antecedentes, classes, centroids) = cromossomo
     base_de_dados = BaseDados.BaseDados()
     base_de_dados.criarConjuntos(obj_reader.inputs, centroids)
@@ -16,7 +16,7 @@ def __getFitness__(obj_reader, cromossomo, pesos):
     regras = red.reduzir(conjuntos_de_entradas_fuzzy, particoes_entradas, regras,
                                                  pesos, obj_reader.instancias)
     #print(2, regras)
-    return regras, Geral.classificar("MEAN",
+    return regras, Geral.classificar(agregacao,composicao,
                              conjuntos_de_entradas_fuzzy,
                              particoes_entradas,
                              regras,

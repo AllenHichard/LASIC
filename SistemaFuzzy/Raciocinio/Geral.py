@@ -3,7 +3,7 @@ import skfuzzy as fuzz
 from Metricas import Objetivos as obj
 
 
-def classificar(operador_Agregacao, conjuntos_de_entradas_fuzzy, particoes_entradas, regras, pesos, instancias, outputs):
+def classificar(operador_Agregacao, operador_Composicao, conjuntos_de_entradas_fuzzy, particoes_entradas, regras, pesos, instancias, outputs):
     resultados = []
     gabarito = []
     ocorrencias = {}
@@ -26,7 +26,7 @@ def classificar(operador_Agregacao, conjuntos_de_entradas_fuzzy, particoes_entra
                 nível_ativado = antecedentes[i]-1
                 grau = fuzz.interp_membership(particoes_entradas[i], conjuntos_de_entradas_fuzzy[i][nível_ativado], valor)
                 graus_pertinencias.append(grau)
-            tnorma = np.prod(graus_pertinencias)*peso #mudar a composição com um if (min, max, prod)
+            tnorma = composicao(graus_pertinencias, peso, operador_Composicao)
             if tnorma > 0:
                 classificacaoGeral[classe].append(tnorma)
         classe = getClasse(classificacaoGeral, operador_Agregacao)
@@ -34,14 +34,19 @@ def classificar(operador_Agregacao, conjuntos_de_entradas_fuzzy, particoes_entra
         resultados.append(classe)
     return obj.Objetivos().__getAcuraciaDatasetBalanceado__(resultados, gabarito)
 
+def composicao(graus_pertinencias, peso, operador_Composicao):
+    if str(operador_Composicao).__eq__("MIN"):
+        return np.min(graus_pertinencias) * peso
+    else:
+        return np.prod(graus_pertinencias)*peso
+    #mudar a composição com um if (min, max, prod)
+
 def getClasse(classificacaoGeral, operador_Agregacao):
     maiorPertinencia = 0
     classe = 0
     for c in classificacaoGeral:
         if len(classificacaoGeral[c]) > 0:
-            if str(operador_Agregacao).__eq__("MAX"):
-                pertinencia = np.max(classificacaoGeral[c])
-            elif str(operador_Agregacao).__eq__("MEAN"):
+            if str(operador_Agregacao).__eq__("MEAN"):
                 pertinencia = np.mean(classificacaoGeral[c])
             else:
                 pertinencia = np.max(classificacaoGeral[c])

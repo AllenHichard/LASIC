@@ -13,6 +13,18 @@ from jmetal.core.solution import FloatSolution, BinarySolution, CompositeSolutio
 """
 import itertools
 
+
+from Config import ParametrosJSON as json
+inputs = json.getArcEntrada()
+fuzzy, ag = inputs['SISTEMA']
+conjuntos = inputs['CONJUNTO_FUZZY']
+granularidade = inputs['GRANULARIDADE']
+composicao = inputs['OPERADOR_COMPOSICAO']
+agregacao = inputs['OPERADOR_AGREGACAO']
+inferencia = inputs['INFERENCIA']
+temPeso = inputs['PESOS']
+default = inputs['DEFAULT']
+
 class MixedIntegerFloatProblem(Problem):
     def __init__(self, obj_reader, semente, lower_upper_class, lower_upper_centroids):
         super(MixedIntegerFloatProblem, self).__init__()
@@ -63,18 +75,16 @@ class MixedIntegerFloatProblem(Problem):
         #inter = len(new_antecedentes)
         regras, acuracia = Fitness.__getFitness__(self.entrada,
                                           [new_antecedentes,consequentes,centroides],
-                                          pesos)
+                                          pesos, agregacao, composicao)
         interTemp = 1 - len(regras[0])/len(self.entrada.instancias)
         #print(acuracia, interTemp)
         if (acuracia > self.maxAtual):
             self.maxAtual = acuracia
             self.inter = interTemp
-            print(1, "evolução acc: ", acuracia)
-            print(1, "evolução inter: ", len(regras[0]) ,self.inter)
-        if interTemp > self.inter:
+            print("evolução acc: ", acuracia, "evolução inter: ", len(regras[0]) ,self.inter)
+        if acuracia >=  self.maxAtual and interTemp > self.inter:
             self.inter = interTemp
-            print(2, "evolução acc: ", acuracia)
-            print(2, "evolução inter: ", len(regras[0]) ,self.inter)
+            print("evolução acc: ", acuracia, "evolução inter: ", len(regras[0]) ,self.inter)
 
         solution.objectives[0] = -acuracia
         solution.objectives[1] = -interTemp
