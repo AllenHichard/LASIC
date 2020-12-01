@@ -22,6 +22,7 @@ granularidade = inputs['GRANULARIDADE']
 composicao = inputs['OPERADOR_COMPOSICAO']
 agregacao = inputs['OPERADOR_AGREGACAO']
 inferencia = inputs['INFERENCIA']
+seed = inputs["SEMENTE"]
 temPeso = inputs['PESOS']
 default = inputs['DEFAULT']
 
@@ -29,7 +30,7 @@ class MixedIntegerFloatProblem(Problem):
     def __init__(self, obj_reader, semente, lower_upper_class, lower_upper_centroids):
         super(MixedIntegerFloatProblem, self).__init__()
         self.entrada = obj_reader
-        self.isSeed= True
+        self.isSeed= seed
         self.interacao = 1
         self.antecedentes = []
         for antecedente in semente[0]:
@@ -39,8 +40,12 @@ class MixedIntegerFloatProblem(Problem):
         self.centroids = semente[2]
         lower_label = lower_upper_class[0]
         upper_label = lower_upper_class[1]
-        number_of_integer_variables_inputs = len(self.antecedentes)
-        number_of_integer_variables_outputs = len(self.labels)
+        if self.isSeed:
+            number_of_integer_variables_inputs = len(self.antecedentes)
+            number_of_integer_variables_outputs = len(self.labels)
+        else:
+            number_of_integer_variables_inputs = 540
+            number_of_integer_variables_outputs = 135 # iris
         number_of_float_variables_centralPoints = len(self.centroids)
         self.maxAtual = 0
 
