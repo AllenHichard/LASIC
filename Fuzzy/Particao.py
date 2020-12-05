@@ -12,63 +12,52 @@ class Particao:
         self.conjuntos = []
         self.eixo_x = np.arange(inicio, fim, (fim - inicio) / (discretizacao - 1))
         self.eixo_x[len(self.eixo_x) - 1] = fim
-        self.passos = (fim - inicio) / (len(tiposConjunto) + 1)
+        self.largura_base_superior = (fim - inicio) / (2*len(tiposConjunto) - 1)
+        self.largura_base_inferior = (fim - inicio) / (len(tiposConjunto) + 1)
         self.ponto_referencial = inicio
 
     def calculaParticaoTriangular(self):
-        print(self.ponto_referencial, self.passos)
-        pontoMedio = self.ponto_referencial + self.passos
-        conjunto = fuzz.trimf(self.eixo_x, [self.ponto_referencial,
-                                            pontoMedio,
-                                            self.ponto_referencial +self.passos * 2])
-        self.ponto_referencial += self.passos
-        return conjunto
+        pontoInicial = self.ponto_referencial
+        pontoMedio = self.ponto_referencial + self.largura_base_inferior
+        pontoFinal = self.ponto_referencial +self.largura_base_inferior * 2
+        self.ponto_referencial += self.largura_base_inferior
+        return fuzz.trimf(self.eixo_x, [pontoInicial, pontoMedio,pontoFinal])
+
     def calcularParticaoTrapezoidal(self, index):
-        passoTrap = self.passos / 2
-        pontoMedio = self.ponto_referencial + self.passos
+        pontoInicial = self.ponto_referencial
+        pontoMedio = self.ponto_referencial + self.largura_base_inferior
+        pontoFinal = self.ponto_referencial + self.largura_base_inferior * 2
         if index == 0:
-            conjunto = fuzz.trapmf(self.eixo_x, [self.ponto_referencial,self.ponto_referencial,
-                                                 pontoMedio,
-                                                 self.ponto_referencial + self.passos * 2])
+            trapezio = [pontoInicial, pontoInicial, pontoMedio, pontoFinal]
         elif index == len(self.tiposConjunto) - 1:
-            conjunto = fuzz.trapmf(self.eixo_x, [self.ponto_referencial,
-                                                 pontoMedio,
-                                                 self.ponto_referencial + self.passos * 2,
-                                                 self.ponto_referencial + self.passos * 2])
+            trapezio = [pontoInicial, pontoMedio, pontoFinal, pontoFinal]
         else:
-            conjunto =  fuzz.trapmf(self.eixo_x,[self.ponto_referencial,
-                                                self.ponto_referencial + passoTrap,
-                                                 self.ponto_referencial + passoTrap * 3,
-                                                self.ponto_referencial + self.passos * 2])
-        self.ponto_referencial += self.passos
-        return conjunto
+            trapezio = [pontoInicial, pontoInicial+self.largura_base_superior ,pontoFinal-self.largura_base_superior, pontoFinal]
+        self.ponto_referencial += self.largura_base_inferior
+        return fuzz.trapmf(self.eixo_x, trapezio)
 
     def calcularParticaoGaussiana(self):
-        pontoMedio = self.ponto_referencial + self.passos
-        conjunto =  fuzz.gaussmf(self.eixo_x, pontoMedio, self.passos/len(self.tiposConjunto))
-        self.ponto_referencial += self.passos
-        return conjunto
+        pontoMedio = self.ponto_referencial + self.largura_base_inferior
+        self.ponto_referencial += self.largura_base_inferior
+        return fuzz.gaussmf(self.eixo_x, pontoMedio, self.largura_base_inferior/len(self.tiposConjunto))
 
     def criarConjunto(self):
         for index, tipoConjunto in enumerate(self.tiposConjunto):
             if tipoConjunto == "TRI":
-                conjuntoAtual = self.calculaParticaoTriangular()
-                self.conjuntos.append(conjuntoAtual)
-                plt.plot(self.eixo_x, conjuntoAtual)
+                self.conjuntos.append(self.calculaParticaoTriangular())
             elif tipoConjunto == "TRAP":
-                conjuntoAtual = self.calcularParticaoTrapezoidal(index)
-                self.conjuntos.append(conjuntoAtual)
-                plt.plot(self.eixo_x, conjuntoAtual)
+                self.conjuntos.append(self.calcularParticaoTrapezoidal(index))
             elif tipoConjunto == "GAUSS":
-                conjuntoAtual = self.calcularParticaoGaussiana()
-                self.conjuntos.append(conjuntoAtual)
-                plt.plot(self.eixo_x, conjuntoAtual)
-            #self.particoes_entradas.append(eixo_x)
+                self.conjuntos.append(self.calcularParticaoGaussiana())
 
+    def plotParticao(self):
+        for conjunto in self.conjuntos:
+            plt.plot(self.eixo_x, conjunto)
         plt.show()
 
-tiposConjunto = ["TRAP", "TRI", "TRAP"]
 
+tiposConjunto = ["TRAP", "TRAP", "TRI", "TRAP", "GAUSS"]
 n = 1000
-part = Particao(0, 100, n, tiposConjunto)
+part = Particao(0, 80, n, tiposConjunto)
 part.criarConjunto()
+part.plotParticao()
