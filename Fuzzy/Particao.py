@@ -49,15 +49,32 @@ class Particao:
                 self.conjuntos.append(self.calcularParticaoTrapezoidal(index))
             elif tipoConjunto == "GAUSS":
                 self.conjuntos.append(self.calcularParticaoGaussiana())
+        return self.conjuntos
 
     def plotParticao(self):
         for conjunto in self.conjuntos:
             plt.plot(self.eixo_x, conjunto)
         plt.show()
 
+    def getPertinenciaConjuntos(self, x):
+        conjuntoAtivado = -1
+        pertinenciaMax = 0
+        for index, conjunto in enumerate(self.conjuntos):
+            pertinencia = fuzz.interp_membership(self.eixo_x, conjunto, x)
+            if pertinenciaMax < pertinencia:
+                conjuntoAtivado = index
+                pertinenciaMax = pertinencia
+        return conjuntoAtivado, pertinenciaMax
 
-tiposConjunto = ["TRAP", "TRAP", "TRI", "TRAP", "GAUSS"]
+    def getPertinenciaIdConjunto(self, indexConjunto, x):
+        pertinencia = fuzz.interp_membership(self.eixo_x, self.conjuntos[indexConjunto], x)
+        return pertinencia
+
+
+"""
+tiposConjunto = ["TRAP", "TRI", "TRAP"]
 n = 1000
 part = Particao(0, 80, n, tiposConjunto)
 part.criarConjunto()
 part.plotParticao()
+"""

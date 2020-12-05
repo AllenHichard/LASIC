@@ -17,6 +17,7 @@ def SistemaFuzzy(paths_treino, paths_teste, agregacao,composicao, temPeso):
         base_de_regras.wangMendel(conjuntos_de_entradas_fuzzy, particoes_entradas, obj_reader.instancias)
         # Escolhe entre com e sem pesos
         regras = base_de_regras.__getRegras__()
+        #print(regras[0].__len__())
         if temPeso:
             pesos = base_de_regras.calculaPesos(base_de_dados.conjuntos_de_entradas_fuzzy, base_de_dados.particoes_entradas,
                                                 obj_reader.instancias,obj_reader.output)
