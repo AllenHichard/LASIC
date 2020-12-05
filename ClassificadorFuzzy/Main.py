@@ -1,7 +1,9 @@
-from Fuzzy.Keel import LeitorDiretorio, LeitorKeel
-from Fuzzy.BaseDados import BaseDados
-from Fuzzy.BaseRegras import BaseRegras
-from Fuzzy.Classificacao import Classificacao
+from ClassificadorFuzzy.Diretorio import LeitorDiretorio
+from ClassificadorFuzzy.Keel import LeitorKeel
+from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.BaseDados import BaseDados
+from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.BaseRegras import BaseRegras
+from ClassificadorFuzzy.SistemaFuzzy.Raciocinio.Geral import Classificacao
+
 arquivos_treinamento = LeitorDiretorio.datasets("tra")
 arquivos_teste = LeitorDiretorio.datasets("tst")
 for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_teste):

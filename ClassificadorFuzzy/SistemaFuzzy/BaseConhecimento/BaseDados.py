@@ -1,6 +1,6 @@
 import numpy as np
 import skfuzzy as fuzz
-from Fuzzy import Particao
+from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento import Particao
 
 class BaseDados:
     # pontos iniciais [0,1,2,1]

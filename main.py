@@ -16,7 +16,7 @@ paths_treino = ltr.datasets("tra")
 paths_teste = ltr.datasets("tst")
 
 if fuzzy:
-    print("Execução do Sistema Fuzzy")
+    print("Execução do Sistema ClassificadorFuzzy")
     SBRF.SistemaFuzzy(paths_treino, paths_teste, agregacao,composicao, temPeso)
 if ag:
     print("Execução do Algoritmo Genético")

@@ -1,4 +1,4 @@
-from Fuzzy.Keel import Instancia
+from ClassificadorFuzzy.Model import Instancia
 import re
 
 class LeitorKeel:

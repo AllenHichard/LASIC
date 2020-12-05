@@ -1,7 +1,7 @@
 import numpy as np
 import skfuzzy as fuzz
-from Fuzzy import Regra
-from Fuzzy import BaseDados as bd
+from ClassificadorFuzzy.Model import Regra
+from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.BaseDados import BaseDados as bd
 
 class BaseRegras:
 
