@@ -56,3 +56,36 @@ def getClasse(classificacaoGeral, operador_Agregacao):
     return classe
 
 
+def calculaPesos(self, conjuntos_de_entradas_fuzzy, particoes_entradas, instancias, outputs):
+    for antecedentes in self.regras[0]:
+        classificacaoGeral = {}
+        for output in outputs:
+            classificacaoGeral[outputs[output]] = []
+        for instancia in instancias:
+            graus_pertinencias = []
+            atributos = instancia.__getAtributos__()
+            classe = instancia.__getClasse__()
+            for i, valor in enumerate(atributos):
+                nível_ativado = antecedentes[i] - 1
+                grau = fuzz.interp_membership(particoes_entradas[i],
+                                              conjuntos_de_entradas_fuzzy[i][nível_ativado],
+                                              valor)
+                graus_pertinencias.append(grau)
+            compatibilidade = np.prod(graus_pertinencias)  # operador produto #u1*u2*.....*un
+            classificacaoGeral[classe].append(compatibilidade)
+        lista_bg = []
+        for classe in classificacaoGeral:
+            bg = np.sum(classificacaoGeral[classe])
+            lista_bg.append(bg)
+        Bgx = np.max(lista_bg)
+        M = len(lista_bg)
+        lista_bg.remove(Bgx)
+        betha = np.sum(lista_bg) / (M-1)
+        numerador = abs(Bgx - betha)
+        denonimador = np.sum(lista_bg) + Bgx
+        CF = numerador/denonimador
+        self.pesos.append(CF)
+    #print(len(self.regras), len(self.pesos))
+    #print(self.pesos)
+    return self.pesos
+

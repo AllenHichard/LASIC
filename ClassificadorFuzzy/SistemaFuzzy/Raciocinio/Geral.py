@@ -4,22 +4,22 @@ from Metricas import Objetivos as obj
 
 class Classificacao:
 
-    def __init__(self, particoes, regras, instancias, classes):
+    def __init__(self, particoes, regras, pesos, instancias, classes):
         self.particoes = particoes
         self.classes = classes
         self.regras = regras
+        self.pesos = pesos
         self.instancias = instancias
         self.gabarito = []
         self.resultado = []
 
     def classificar(self):
-        pesos = [1] * len(self.regras)
         for instancia in self.instancias:
             tnorma_classe = []
             self.gabarito.append(instancia.classe)
             for _ in self.classes: tnorma_classe.append([])
             caracteristicas = instancia.caracteristicas
-            for regra, peso in zip(self.regras, pesos):
+            for regra, peso in zip(self.regras, self.pesos):
                 pertinencias_maximas = []
                 antecedentes_regras = regra.antecedentes
                 for id_antecedente, caracteristica, particao in zip(antecedentes_regras, caracteristicas, self.particoes):

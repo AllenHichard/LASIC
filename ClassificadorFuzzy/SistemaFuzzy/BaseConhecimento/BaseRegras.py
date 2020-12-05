@@ -2,49 +2,29 @@ import numpy as np
 import skfuzzy as fuzz
 from ClassificadorFuzzy.Model import Regra
 from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.BaseDados import BaseDados as bd
+from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.AlgoritmoRegras.WangMendel import WangMendel
+from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.AlgoritmoRegras.Aleatorio import Aleatorio
+
 
 class BaseRegras:
 
-    def __init__(self, particoes, instancias):
+    def __init__(self, particoes, instancias, classes):
         self.particoes = particoes
         self.instancias = instancias
-        self.regras = []
-        self.tnormas = []
+        self.classes = classes
 
-    def wangMendel(self):
-        for instancia in self.instancias:
-            antecedentes = []
-            consequente = instancia.classe
-            pertinencias_maximas = []
-            peso = 1
-            for atributo, particao in zip(instancia.caracteristicas, self.particoes):
-                conjuntoAtivado, pertinenciaMax = particao.getPertinenciaConjuntos(atributo)
-                antecedentes.append(conjuntoAtivado)
-                pertinencias_maximas.append(pertinenciaMax)
-            tnorma = np.prod(pertinencias_maximas)
-            regra = Regra.Regra(antecedentes, consequente, tnorma, peso)
-            self.atualizarRegras(tnorma, regra)
-        return self.regras
+    def getRegras(self, metodo=""):
+        if str(metodo).__eq__("Wang-Mendel"):
+            wm = WangMendel(self.particoes, self.instancias)
+            return wm.wangMendel()
+        else:
+            aleatorio = Aleatorio(self.particoes, self.instancias, self.classes)
+            return aleatorio.aleatorio()
 
-    def atualizarRegras(self, tnorma, regra):
-        if tnorma > 0:
-            index, cond = self.inconsistencia(regra)
-            if not cond:
-                self.regras.append(regra)
-                self.tnormas.append(tnorma)
-            elif self.tnormas[index] < tnorma:
-                self.regras[index] = regra
-                self.tnormas[index] = tnorma
 
-    def inconsistencia(self,novaRegra):
-        for index, r in enumerate(self.regras):
-            if r.__eq__(novaRegra):
-                return index, True
-        return -1, False
 
-    def printRegras(self):
-        for regra in self.regras:
-            print(regra.__str__())
+
+
 
 """
 mudou a entrada para instâncias
