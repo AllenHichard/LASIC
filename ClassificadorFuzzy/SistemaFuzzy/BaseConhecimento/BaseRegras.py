@@ -7,7 +7,6 @@ from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.AlgoritmoRegras.Aleatorio 
 
 
 class BaseRegras:
-
     def __init__(self, particoes, instancias, classes):
         self.particoes = particoes
         self.instancias = instancias

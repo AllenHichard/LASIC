@@ -7,8 +7,8 @@ from jmetal.util.solution import get_non_dominated_solutions, print_function_val
     print_variables_to_file
 from jmetal.util.termination_criterion import StoppingByEvaluations
 
-def nsgaii_train( obj_reader, semente, lower_upper_class, lower_upper_centroids):
-    problem = MixedIntegerFloatProblem(obj_reader, semente, lower_upper_class, lower_upper_centroids)
+def nsgaii_train(particoes, regras, pesos, instancias, classes):
+    problem = MixedIntegerFloatProblem(particoes, regras, pesos, instancias, classes)
 
     max_evaluations = 10000
     algorithm = NSGAII(

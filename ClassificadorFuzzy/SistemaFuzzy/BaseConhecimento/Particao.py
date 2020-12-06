@@ -16,12 +16,23 @@ class Particao:
         self.largura_base_inferior = (fim - inicio) / (len(tiposConjunto) + 1)
         self.ponto_referencial = inicio
 
-    def calculaParticaoTriangular(self):
-        pontoInicial = self.ponto_referencial
-        pontoMedio = self.ponto_referencial + self.largura_base_inferior
-        pontoFinal = self.ponto_referencial +self.largura_base_inferior * 2
+        self.base1 = 0
+        self.pico = 0
+        self.base2 = 0
+
+    def setPontoCentral(self, valor):
+        pontoInicial = self.base1
+        pontoMedio = valor
+        pontoFinal = self.base2
         self.ponto_referencial += self.largura_base_inferior
-        return fuzz.trimf(self.eixo_x, [pontoInicial, pontoMedio,pontoFinal])
+        self.conjuntos[1] = fuzz.trimf(self.eixo_x, [pontoInicial, pontoMedio, pontoFinal])
+
+    def calculaParticaoTriangular(self):
+        self.base1 = self.ponto_referencial
+        self.pico = self.ponto_referencial + self.largura_base_inferior
+        self.base2 = self.ponto_referencial +self.largura_base_inferior * 2
+        self.ponto_referencial += self.largura_base_inferior
+        return fuzz.trimf(self.eixo_x, [ self.base1, self.pico,  self.base2])
 
     def calcularParticaoTrapezoidal(self, index):
         pontoInicial = self.ponto_referencial

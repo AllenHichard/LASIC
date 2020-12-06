@@ -3,7 +3,9 @@ from math import sqrt, exp, pow, sin
 import Fitness
 from jmetal.core.problem import FloatProblem, BinaryProblem, Problem
 from jmetal.core.solution import FloatSolution, BinarySolution, CompositeSolution, IntegerSolution
-
+from Reducao_Regras import Reducao
+from ClassificadorFuzzy.Model.Regra import Regra
+from ClassificadorFuzzy.SistemaFuzzy.Raciocinio.Geral import Classificacao
 """
 .. module:: constrained
    :platform: Unix, Windows
@@ -14,7 +16,7 @@ from jmetal.core.solution import FloatSolution, BinarySolution, CompositeSolutio
 import itertools
 
 
-from Config import ParametrosJSON as json
+"""from Config import ParametrosJSON as json
 inputs = json.getArcEntrada()
 fuzzy, ag = inputs['SISTEMA']
 conjuntos = inputs['CONJUNTO_FUZZY']
@@ -25,74 +27,92 @@ inferencia = inputs['INFERENCIA']
 seed = inputs["SEMENTE"]
 temPeso = inputs['PESOS']
 default = inputs['DEFAULT']
+"""
+
+
 
 class MixedIntegerFloatProblem(Problem):
-    def __init__(self, obj_reader, semente, lower_upper_class, lower_upper_centroids):
+    def __init__(self, particoes, regras, pesos, instancias, classes):
         super(MixedIntegerFloatProblem, self).__init__()
-        self.entrada = obj_reader
-        self.isSeed= seed
-        self.interacao = 1
+        self.particoes = particoes
+        self.regras = regras
+        self.pesos = pesos
+        self.interacao = 0
+        self.instancias = instancias
+        self.classes = classes
         self.antecedentes = []
-        for antecedente in semente[0]:
-            self.antecedentes += antecedente
-        self.labels = semente[1]
-        self.inter = len(self.antecedentes) / len(self.entrada.instancias)
-        self.centroids = semente[2]
-        lower_label = lower_upper_class[0]
-        upper_label = lower_upper_class[1]
-        if self.isSeed:
-            number_of_integer_variables_inputs = len(self.antecedentes)
-            number_of_integer_variables_outputs = len(self.labels)
-        else:
-            number_of_integer_variables_inputs = 540
-            number_of_integer_variables_outputs = 135 # iris
+        self.consequentes = []
+        self.isSeed = True
+        for regra in self.regras:
+            self.antecedentes += regra.antecedentes
+            self.consequentes.append(regra.consequente)
+        self.interpretabilidadeInicial = len(self.regras) / len(self.instancias)
+        self.centroids = [particao.pico for particao in self.particoes]
+        self.inicios = [particao.inicio for particao in self.particoes]
+        self.fins = [particao.fim for particao in self.particoes]
+        self.lower_centroids = []
+        self.upper_centroids = []
+        for inicio, fim, pontoMedio in zip(self.inicios, self.fins, self.centroids):
+            (limite_inferior, limite_superior) = self.lower_upper_centroids(inicio, fim, pontoMedio)
+            self.lower_centroids.append(limite_inferior)
+            self.upper_centroids.append(limite_superior)
+        number_of_integer_variables_inputs = len(self.antecedentes)
+        number_of_integer_variables_outputs = len(self.consequentes)
         number_of_float_variables_centralPoints = len(self.centroids)
         self.maxAtual = 0
-
-
         self.number_of_objectives = 2
         self.number_of_variables = 3
         #self.number_of_constraints = 0
 
-
-        self.float_lower_bound_centralPoints = [lower for lower in lower_upper_centroids[0]]
-        self.float_upper_bound_centralPoints = [upper for upper in lower_upper_centroids[1]]
-        self.int_lower_bound_attribute = [1 for _ in range(number_of_integer_variables_inputs)]
-        self.int_upper_bound_attribute = [3 for _ in range(number_of_integer_variables_inputs)]
-        self.int_lower_bound_label = [lower_label for _ in range(number_of_integer_variables_outputs)]
-        self.int_upper_bound_label = [upper_label for _ in range(number_of_integer_variables_outputs)]
+        self.int_lower_bound_attribute = [0 for _ in range(number_of_integer_variables_inputs)]
+        self.int_upper_bound_attribute = [2 for _ in range(number_of_integer_variables_inputs)]
+        self.int_lower_bound_label = [0 for _ in range(number_of_integer_variables_outputs)]
+        self.int_upper_bound_label = [len(classes)-1 for _ in range(number_of_integer_variables_outputs)]
+        self.float_lower_bound_centralPoints = [lower for lower in  self.lower_centroids]
+        self.float_upper_bound_centralPoints = [upper for upper in self.upper_centroids]
 
         self.obj_directions = [self.MINIMIZE]
         self.obj_labels = ['Ones']
 
-    def evaluate(self, solution: CompositeSolution) -> CompositeSolution:
+        self.maiorInterpretabilidade = 0
+        self.maiorAcuracia = 0
 
+    def lower_upper_centroids(self, inicio, fim, pontoMedio):
+        PI = inicio
+        PS = fim
+        PM = pontoMedio
+        vi = PM - ((PM - PI) / 2)
+        vs = PM + ((PS - PM) / 2)
+        lower_centroids = vi
+        upper_centroids = vs
+        return lower_centroids, upper_centroids
+
+    def evaluate(self, solution: CompositeSolution) -> CompositeSolution:
         if self.interacao % 1000 == 0:
-            print(self.interacao)
+            #print(self.interacao)
+            pass
         self.interacao += 1
         antecedentes = solution.variables[0].variables
         consequentes = solution.variables[1].variables
         centroides = solution.variables[2].variables
-        #print(solution.variables[0].variables, solution.variables[1].variables, solution.variables[2].variables)
-        #print(solution.variables[0].variables)
-        new_antecedentes = list(self.chunks(antecedentes, len(centroides)))
-        pesos =  [1]*len(antecedentes)
-        #inter = len(new_antecedentes)
-        regras, acuracia = Fitness.__getFitness__(self.entrada,
-                                          [new_antecedentes,consequentes,centroides],
-                                          pesos, agregacao, composicao)
-        interTemp = 1 - len(regras[0])/len(self.entrada.instancias)
-        #print(acuracia, interTemp)
-        if (acuracia > self.maxAtual):
-            self.maxAtual = acuracia
-            self.inter = interTemp
-            print("evolução acc: ", acuracia, "evolução inter: ", len(regras[0]) ,self.inter)
-        if acuracia >=  self.maxAtual and interTemp > self.inter:
-            self.inter = interTemp
-            print("evolução acc: ", acuracia, "evolução inter: ", len(regras[0]) ,self.inter)
+        new_regras = self.cromossomo_para_regras(antecedentes, consequentes, len(centroides))
+        particoes = self.alterar_centroids(centroides)
+        resultadoTrain = Classificacao(particoes, new_regras, self.pesos, self.instancias, self.classes)
+        acuracia = resultadoTrain.classificar()
+        interpretabilidade =  (1 - len(new_regras) / len(self.instancias))
+        #print(acuracia, interpretabilidade)
+
+
+        if (acuracia > self.maiorAcuracia):
+            self.maiorAcuracia = acuracia
+            self.maiorInterpretabilidade = interpretabilidade
+            print("evolução acc: ", acuracia, "evolução inter: ", len(new_regras) ,self.maiorInterpretabilidade)
+        if acuracia >=  self.maiorAcuracia and interpretabilidade > self.maiorInterpretabilidade:
+            self.maiorInterpretabilidade = interpretabilidade
+            print("evolução acc: ", acuracia, "evolução inter: ", len(new_regras) ,self.maiorInterpretabilidade)
 
         solution.objectives[0] = -acuracia
-        solution.objectives[1] = -interTemp
+        solution.objectives[1] = -interpretabilidade
         return solution
 
     def create_solution(self) -> CompositeSolution:
@@ -108,6 +128,23 @@ class MixedIntegerFloatProblem(Problem):
         for i in range(0, len(lista), n):
             yield lista[i:i + n]
 
+    def alterar_centroids(self, cromossomo_centroids):
+        particoes = []
+        for particao, pontoCentral in zip(self.particoes, cromossomo_centroids):
+            particao.pico = pontoCentral
+            particoes.append(particao)
+        return particoes
+
+    def cromossomo_para_regras(self, cromossomo_antecedentes, cromossomo_consequente, tam_antecedentes):
+        regras = []
+        for index_classe, salto in enumerate(range(0, len(cromossomo_antecedentes), tam_antecedentes)):
+            antecedentes = cromossomo_antecedentes[salto:salto+tam_antecedentes]
+            consequente = cromossomo_consequente[index_classe]
+            regra = Regra(antecedentes, consequente, 1, 1)
+            regras.append(regra)
+            #print(index_classe, regra.__str__())
+        return Reducao(regras, self.instancias, self.particoes).reduzir()
+
     def insert_seed(self):
         attributes_solution = IntegerSolution(self.int_lower_bound_attribute, self.int_upper_bound_attribute,
                                               self.number_of_objectives, self.number_of_constraints)
@@ -120,7 +157,7 @@ class MixedIntegerFloatProblem(Problem):
 
         attributes_solution.variables = self.antecedentes
 
-        labels_solution.variables =  self.labels
+        labels_solution.variables =  self.consequentes
 
         points_solution.variables =  self.centroids
         return CompositeSolution([attributes_solution, labels_solution, points_solution])

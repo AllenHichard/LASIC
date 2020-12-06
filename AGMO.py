@@ -10,6 +10,8 @@ from examples.multiobjective.nsgaii import nsgaii_fuzzy as nsgaii
 def lower_upper_class(outputs):
     limitClass = list(outputs.values())
     return limitClass[len(limitClass)-1], limitClass[0]
+
+
 def lower_upper_centroids(inputs, centroids):
     lower_centroids = []
     upper_centroids = []
