@@ -13,8 +13,8 @@ def nsgaii_train(particoes, regras, pesos, instancias, classes):
     max_evaluations = 10000
     algorithm = NSGAII(
         problem=problem,
-        population_size=100,
-        offspring_population_size=100,
+        population_size=10,
+        offspring_population_size=10,
         mutation=CompositeMutation([IntegerPolynomialMutation(0.05, 20),
                                     IntegerPolynomialMutation(0.05, 20),
                                     PolynomialMutation(0.05, 20.0)]),
