@@ -13,7 +13,18 @@ class Classificacao:
         self.gabarito = []
         self.resultado = []
 
+    def classeDefaut(self):
+        ocorrencias = []
+        for _ in self.classes:
+            ocorrencias.append(0)
+        for regra in self.regras:
+            posicao = regra.consequente
+            ocorrencias[posicao] += 1
+        classeDefault = ocorrencias.index(np.min(ocorrencias))
+        return classeDefault
+
     def classificar(self):
+        classeDefault = self.classeDefaut()
         for instancia in self.instancias:
             tnorma_classe = []
             self.gabarito.append(instancia.classe)
@@ -29,6 +40,7 @@ class Classificacao:
                 self.tnormas_por_classe(tnorma, regra.consequente, tnorma_classe)
 
             classe = self.agregacao_get_classe(tnorma_classe, "MAX")
+            if classe == -1: classe = classeDefault
             self.resultado.append(classe)
         return obj.Objetivos().__getAcuraciaDatasetBalanceado__(self.resultado, self.gabarito)
 
