@@ -35,6 +35,7 @@ class MixedIntegerFloatProblem(Problem):
     def __init__(self, particoes, regras, instancias, classes):
         super(MixedIntegerFloatProblem, self).__init__()
         self.particoes = particoes
+        self.maxAtributos = len(instancias)*(len(regras[0].antecedentes)+1)
         self.regras = regras
         self.interacao = 0
         self.instancias = instancias
@@ -101,6 +102,12 @@ class MixedIntegerFloatProblem(Problem):
         interpretabilidade =  (1 - len(new_regras) / len(self.instancias))
         #print(acuracia, interpretabilidade)
 
+        count = 0
+        for r in new_regras:
+            lista = r.antecedentes
+            count += len(lista) + 1
+            count -= lista.count(-1)
+        interpretabilidade = (1 - count / self.maxAtributos)
 
         if (acuracia > self.maiorAcuracia):
             self.maiorAcuracia = acuracia
