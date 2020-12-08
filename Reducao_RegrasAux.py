@@ -5,7 +5,8 @@ from ClassificadorFuzzy.Model import Regra
 class Reducao:
 
     def __init__(self, regras, instancias, particoes):
-        self.regrasComRuido = regras.copy()
+        self.regrasComRuido = regras
+        self.regrasSemRuido = []
         self.instancias = instancias
         self.particoes = particoes
         self.regras = []
@@ -23,28 +24,40 @@ class Reducao:
                     pertinencia = particao.getPertinenciaIdConjunto(id_antecedente, caracteristica)
                     pertinencias_maximas.append(pertinencia)
                 tnorma = np.prod(pertinencias_maximas)
-                regraAtual.tnorma = tnorma
-                self.atualizarRegras(regraAtual)
+                self.atualizarRegras(tnorma, regraAtual)
+        #self.preencher_regra_nula()
 
-        #print("como veio", len(self.regrasComRuido))
-        #for regra in self.regrasComRuido:
-        #    print(regra.__str__())
-        #print("como vai", len(self.regras))
-        #for regra in self.regras:
-        #    print(regra.__str__())
-        #a = '1' + 2
-        return self.regras
+        #print("1 - ", len(self.regrasComRuido))
+        #print("2 - ", len(self.regras))
+        #print("3 - ", len(self.regrasSemRuido))
+        #for regra in self.regrasSemRuido:
+        #    print(regra)
+        #a = 2 + "2"
+        return self.regrasSemRuido
 
-    def atualizarRegras(self, regra):
-        if regra.tnorma > 0:
-            index, cond = self.inconsistencia(regra)
+    def preencher_regra_nula(self):
+        for regra in self.regrasComRuido:
+            regraNula = Regra.Regra([-1] * len(regra.antecedentes), -1, 1, 1)
+            self.regrasSemRuido.append(regraNula)
+        for posicao, regra in enumerate(self.regrasComRuido):
+            if regra in self.regras:
+                self.regrasSemRuido[posicao] = regra
+
+
+
+    def atualizarRegras(self, tnorma, regraAtual):
+
+        if tnorma > 0:
+            index, cond = self.inconsistencia(regraAtual)
             if not cond:
-                self.regras.append(regra)
-            elif self.regras[index].tnorma < regra.tnorma:
-                self.regras[index] = regra
+                self.regras.append(regraAtual)
+                self.tnormas.append(tnorma)
+            elif self.tnormas[index] < tnorma:
+                self.regras[index] = regraAtual
+                self.tnormas[index] = tnorma
 
     def inconsistencia(self, novaRegra):
         for index, r in enumerate(self.regras):
-            if r.eq_antecedentes(novaRegra):
+            if r.__eq__(novaRegra):
                 return index, True
         return -1, False

@@ -12,9 +12,9 @@ class PesoHisao:
 
     def getPesos(self, temPesos):
         if temPesos:
-            return self.calculaPesos()
-        else:
-            return [1] * len(self.regras)
+            self.calculaPesos()
+        #else:
+            #return [1] * len(self.regras)
 
     def calculaPesos(self):
         for regra in self.regras:
@@ -42,7 +42,8 @@ class PesoHisao:
             numerador = abs(Bgx - betha)
             denonimador = np.sum(lista_bg) + Bgx
             CF = numerador / denonimador
-            self.pesos.append(CF)
+            #self.pesos.append(CF)
+            regra.peso = CF
         # print(len(self.regras), len(self.pesos))
         # print(self.pesos)
         return self.pesos

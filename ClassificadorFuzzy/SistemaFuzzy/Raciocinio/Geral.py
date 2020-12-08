@@ -4,11 +4,10 @@ from Metricas import Objetivos as obj
 
 class Classificacao:
 
-    def __init__(self, particoes, regras, pesos, instancias, classes):
+    def __init__(self, particoes, regras, instancias, classes):
         self.particoes = particoes
         self.classes = classes
         self.regras = regras
-        self.pesos = pesos
         self.instancias = instancias
         self.gabarito = []
         self.resultado = []
@@ -30,13 +29,13 @@ class Classificacao:
             self.gabarito.append(instancia.classe)
             for _ in self.classes: tnorma_classe.append([])
             caracteristicas = instancia.caracteristicas
-            for regra, peso in zip(self.regras, self.pesos):
+            for regra in self.regras:
                 pertinencias_maximas = []
                 antecedentes_regras = regra.antecedentes
                 for id_antecedente, caracteristica, particao in zip(antecedentes_regras, caracteristicas, self.particoes):
                     pertinencia = particao.getPertinenciaIdConjunto(id_antecedente,caracteristica)
                     pertinencias_maximas.append(pertinencia)
-                tnorma = self.composicao(pertinencias_maximas, peso, "PROD")
+                tnorma = self.composicao(pertinencias_maximas, regra, "PROD")
                 self.tnormas_por_classe(tnorma, regra.consequente, tnorma_classe)
 
             classe = self.agregacao_get_classe(tnorma_classe, "MAX")
@@ -48,11 +47,11 @@ class Classificacao:
         if tnorma > 0:
             tnorma_classe[classe_ativada].append(tnorma)
 
-    def composicao(self, graus_pertinencias, peso, operador_Composicao):
+    def composicao(self, graus_pertinencias, regra, operador_Composicao):
         if str(operador_Composicao).__eq__("MIN"):
-            return np.min(graus_pertinencias) * peso
+            return np.min(graus_pertinencias) * regra.peso
         else:
-            return np.prod(graus_pertinencias)*peso
+            return np.prod(graus_pertinencias)* regra.peso
         #mudar a composição com um if (min, max, prod)
 
     def agregacao_get_classe(self, classificacaoGeral, operador_Agregacao):

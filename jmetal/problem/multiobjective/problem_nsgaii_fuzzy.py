@@ -32,11 +32,10 @@ default = inputs['DEFAULT']
 
 
 class MixedIntegerFloatProblem(Problem):
-    def __init__(self, particoes, regras, pesos, instancias, classes):
+    def __init__(self, particoes, regras, instancias, classes):
         super(MixedIntegerFloatProblem, self).__init__()
         self.particoes = particoes
         self.regras = regras
-        self.pesos = pesos
         self.interacao = 0
         self.instancias = instancias
         self.classes = classes
@@ -140,7 +139,7 @@ class MixedIntegerFloatProblem(Problem):
         for index_classe, salto in enumerate(range(0, len(cromossomo_antecedentes), tam_antecedentes)):
             antecedentes = cromossomo_antecedentes[salto:salto+tam_antecedentes]
             consequente = cromossomo_consequente[index_classe]
-            regra = Regra(antecedentes, consequente, 1, 1)
+            regra = Regra(antecedentes, consequente, 0)
             regras.append(regra)
             #print(index_classe, regra.__str__())
         return Reducao(regras, self.instancias, self.particoes).reduzir()

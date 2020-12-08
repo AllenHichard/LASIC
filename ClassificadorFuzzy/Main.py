@@ -16,7 +16,7 @@ for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_
     bd = BaseDados(extracao_keel.limites_inferiores_x, extracao_keel.limites_superiores_x, [1000,1000,1000,1000], [["TRAP", "TRI", "TRAP"],["TRAP", "TRI", "TRAP"],["TRAP", "TRI", "TRAP"],["TRAP", "TRI", "TRAP"]])
     particoes = bd.criarParticoes()
     br = BaseRegras(particoes, extracao_keel.instancias, extracao_keel.classes)
-    regras = br.getRegras("Wang-Mendel")
+    regras = br.getRegras()
     pesoHisao = PesoHisao(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
     pesos = pesoHisao.getPesos(False)
     #particoes[0].setPontoCentral(6.7)
@@ -24,14 +24,14 @@ for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_
     #particoes[2].setPontoCentral(4.2)
     #particoes[3].setPontoCentral(1.0)
     #particoes[0].plotParticao()
-    resultadoTrain = Classificacao(particoes, regras, pesos, extracao_keel.instancias, extracao_keel.classes)
+    resultadoTrain = Classificacao(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
 
     #Algoritmo Genético
-    nsgaii.nsgaii_train(particoes, regras, pesos, extracao_keel.instancias, extracao_keel.classes)
+    nsgaii.nsgaii_train(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
 
     #Teste
     file = open(nome_arquivo_test, "r", encoding="utf8")
     extracao_keel = LeitorKeel.LeitorKeel(file)
     extracao_keel.extracaoDados()
-    resultadoTeste = Classificacao(particoes, regras, pesos, extracao_keel.instancias, extracao_keel.classes)
+    resultadoTeste = Classificacao(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
     print(resultadoTrain.classificar(), resultadoTeste.classificar())
