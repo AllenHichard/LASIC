@@ -23,6 +23,7 @@ class Classificacao:
         return classeDefault
 
     def classificar(self):
+        dontcare = -1
         classeDefault = self.classeDefaut()
         for instancia in self.instancias:
             tnorma_classe = []
@@ -33,8 +34,9 @@ class Classificacao:
                 pertinencias_maximas = []
                 antecedentes_regras = regra.antecedentes
                 for id_antecedente, caracteristica, particao in zip(antecedentes_regras, caracteristicas, self.particoes):
-                    pertinencia = particao.getPertinenciaIdConjunto(id_antecedente,caracteristica)
-                    pertinencias_maximas.append(pertinencia)
+                    if not dontcare == id_antecedente:
+                        pertinencia = particao.getPertinenciaIdConjunto(id_antecedente,caracteristica)
+                        pertinencias_maximas.append(pertinencia)
                 tnorma = self.composicao(pertinencias_maximas, regra, "PROD")
                 self.tnormas_por_classe(tnorma, regra.consequente, tnorma_classe)
 

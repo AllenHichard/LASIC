@@ -11,6 +11,7 @@ class Reducao:
         self.regras = []
 
     def reduzir(self):
+        dontcare = -1
         for instancia in self.instancias:
             caracteristicas = instancia.caracteristicas
             classe = instancia.classe
@@ -18,13 +19,15 @@ class Reducao:
                 antecedentes_regras = regraAtual.antecedentes
                 consequente = regraAtual.consequente
                 pertinencias_maximas = []
-                for id_antecedente, caracteristica, particao in zip(antecedentes_regras, caracteristicas, self.particoes):
-                    #print(id_antecedente, caracteristicas, particao)
-                    pertinencia = particao.getPertinenciaIdConjunto(id_antecedente, caracteristica)
-                    pertinencias_maximas.append(pertinencia)
-                tnorma = np.prod(pertinencias_maximas)
-                regraAtual.tnorma = tnorma
-                self.atualizarRegras(regraAtual)
+                if not antecedentes_regras == [-1]*len(antecedentes_regras):
+                    for id_antecedente, caracteristica, particao in zip(antecedentes_regras, caracteristicas, self.particoes):
+                        #print(id_antecedente, caracteristicas, particao)
+                        if not dontcare == id_antecedente:
+                            pertinencia = particao.getPertinenciaIdConjunto(id_antecedente, caracteristica)
+                            pertinencias_maximas.append(pertinencia)
+                    tnorma = np.prod(pertinencias_maximas)
+                    regraAtual.tnorma = tnorma
+                    self.atualizarRegras(regraAtual)
 
         #print("como veio", len(self.regrasComRuido))
         #for regra in self.regrasComRuido:

@@ -16,7 +16,7 @@ for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_
     bd = BaseDados(extracao_keel.limites_inferiores_x, extracao_keel.limites_superiores_x, [1000,1000,1000,1000], [["TRAP", "TRI", "TRAP"],["TRAP", "TRI", "TRAP"],["TRAP", "TRI", "TRAP"],["TRAP", "TRI", "TRAP"]])
     particoes = bd.criarParticoes()
     br = BaseRegras(particoes, extracao_keel.instancias, extracao_keel.classes)
-    regras = br.getRegras()
+    regras = br.getRegras("Wang-Mendel")
     pesoHisao = PesoHisao(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
     pesos = pesoHisao.getPesos(False)
     #particoes[0].setPontoCentral(6.7)

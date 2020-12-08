@@ -63,7 +63,7 @@ class MixedIntegerFloatProblem(Problem):
         self.number_of_variables = 3
         #self.number_of_constraints = 0
 
-        self.int_lower_bound_attribute = [0 for _ in range(number_of_integer_variables_inputs)]
+        self.int_lower_bound_attribute = [-1 for _ in range(number_of_integer_variables_inputs)]
         self.int_upper_bound_attribute = [2 for _ in range(number_of_integer_variables_inputs)]
         self.int_lower_bound_label = [0 for _ in range(number_of_integer_variables_outputs)]
         self.int_upper_bound_label = [len(classes)-1 for _ in range(number_of_integer_variables_outputs)]
@@ -96,7 +96,7 @@ class MixedIntegerFloatProblem(Problem):
         centroides = solution.variables[2].variables
         new_regras = self.cromossomo_para_regras(antecedentes, consequentes, len(centroides))
         particoes = self.alterar_centroids(centroides)
-        resultadoTrain = Classificacao(particoes, new_regras, self.pesos, self.instancias, self.classes)
+        resultadoTrain = Classificacao(particoes, new_regras, self.instancias, self.classes)
         acuracia = resultadoTrain.classificar()
         interpretabilidade =  (1 - len(new_regras) / len(self.instancias))
         #print(acuracia, interpretabilidade)

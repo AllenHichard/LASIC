@@ -82,6 +82,7 @@ class Particao:
         return pertinencia
 
 
+
 """
 tiposConjunto = ["TRAP", "TRI", "TRAP"]
 n = 1000
