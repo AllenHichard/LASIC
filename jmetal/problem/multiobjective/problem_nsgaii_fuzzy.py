@@ -35,6 +35,7 @@ class MixedIntegerFloatProblem(Problem):
     def __init__(self, particoes, regras, instancias, classes):
         super(MixedIntegerFloatProblem, self).__init__()
         self.particoes = particoes
+        self.numeroAntecedentes = len(regras[0].antecedentes)
         self.maxAtributos = len(instancias)*(len(regras[0].antecedentes)+1)
         self.regras = regras
         self.interacao = 0
@@ -47,15 +48,25 @@ class MixedIntegerFloatProblem(Problem):
             self.antecedentes += regra.antecedentes
             self.consequentes.append(regra.consequente)
         self.interpretabilidadeInicial = len(self.regras) / len(self.instancias)
-        self.centroids = [particao.pico for particao in self.particoes]
+        #self.centroids = [particao.pontosCentrais for particao in self.particoes]
+        self.centroids = []
         self.inicios = [particao.inicio for particao in self.particoes]
         self.fins = [particao.fim for particao in self.particoes]
         self.lower_centroids = []
         self.upper_centroids = []
+        """
         for inicio, fim, pontoMedio in zip(self.inicios, self.fins, self.centroids):
             (limite_inferior, limite_superior) = self.lower_upper_centroids(inicio, fim, pontoMedio)
             self.lower_centroids.append(limite_inferior)
             self.upper_centroids.append(limite_superior)
+        """
+        """
+               self.int_lower_bound_attribute = [-1 for _ in range(number_of_integer_variables_inputs)]
+               self.int_upper_bound_attribute = [2 for _ in range(number_of_integer_variables_inputs)]
+               self.int_lower_bound_label = [0 for _ in range(number_of_integer_variables_outputs)]
+               self.int_upper_bound_label = [len(classes)-1 for _ in range(number_of_integer_variables_outputs)]
+               """
+
         number_of_integer_variables_inputs = len(self.antecedentes)
         number_of_integer_variables_outputs = len(self.consequentes)
         number_of_float_variables_centralPoints = len(self.centroids)
@@ -64,12 +75,34 @@ class MixedIntegerFloatProblem(Problem):
         self.number_of_variables = 3
         #self.number_of_constraints = 0
 
+
+        self.float_lower_bound_centralPoints = []
+        self.float_upper_bound_centralPoints = []
+        variacao_max_particoes = []
+        for particao in self.particoes:
+            self.float_lower_bound_centralPoints += particao.limiteInferior
+            self.float_upper_bound_centralPoints += particao.limiteSuperior
+            self.centroids += particao.pontosCentrais
+            variacao_max_particoes.append(len(particao.tiposConjunto)-1)
+
+        #print(variacao_max_particoes)
         self.int_lower_bound_attribute = [-1 for _ in range(number_of_integer_variables_inputs)]
-        self.int_upper_bound_attribute = [2 for _ in range(number_of_integer_variables_inputs)]
+        self.int_upper_bound_attribute = []
+
+
+        for _ in range(0, len(self.antecedentes),  self.numeroAntecedentes):
+            self.int_upper_bound_attribute +=variacao_max_particoes
+
+
+
         self.int_lower_bound_label = [0 for _ in range(number_of_integer_variables_outputs)]
-        self.int_upper_bound_label = [len(classes)-1 for _ in range(number_of_integer_variables_outputs)]
-        self.float_lower_bound_centralPoints = [lower for lower in  self.lower_centroids]
-        self.float_upper_bound_centralPoints = [upper for upper in self.upper_centroids]
+        self.int_upper_bound_label = [len(classes) - 1 for _ in range(number_of_integer_variables_outputs)]
+
+        #print(self.int_lower_bound_attribute)
+        #print(self.int_upper_bound_attribute)
+
+        #self.float_lower_bound_centralPoints = [particao for particao in  self.particoes]
+        #self.float_upper_bound_centralPoints = [upper for upper in self.upper_centroids]
 
         self.obj_directions = [self.MINIMIZE]
         self.obj_labels = ['Ones']
@@ -77,6 +110,7 @@ class MixedIntegerFloatProblem(Problem):
         self.maiorInterpretabilidade = 0
         self.maiorAcuracia = 0
 
+    """
     def lower_upper_centroids(self, inicio, fim, pontoMedio):
         PI = inicio
         PS = fim
@@ -86,6 +120,7 @@ class MixedIntegerFloatProblem(Problem):
         lower_centroids = vi
         upper_centroids = vs
         return lower_centroids, upper_centroids
+    """
 
     def evaluate(self, solution: CompositeSolution) -> CompositeSolution:
         if self.interacao % 1000 == 0:
@@ -95,9 +130,10 @@ class MixedIntegerFloatProblem(Problem):
         antecedentes = solution.variables[0].variables
         consequentes = solution.variables[1].variables
         centroides = solution.variables[2].variables
-        new_regras = self.cromossomo_para_regras(antecedentes, consequentes, len(centroides))
-        particoes = self.alterar_centroids(centroides)
-        resultadoTrain = Classificacao(particoes, new_regras, self.instancias, self.classes)
+        new_regras = self.cromossomo_para_regras(antecedentes, consequentes, self.numeroAntecedentes)
+        #particoes = self.alterar_centroids(centroides)
+        self.alterar_centroids(centroides)
+        resultadoTrain = Classificacao(self.particoes, new_regras, self.instancias, self.classes)
         acuracia = resultadoTrain.classificar()
         interpretabilidade =  (1 - len(new_regras) / len(self.instancias))
         #print(acuracia, interpretabilidade)
@@ -135,11 +171,12 @@ class MixedIntegerFloatProblem(Problem):
             yield lista[i:i + n]
 
     def alterar_centroids(self, cromossomo_centroids):
-        particoes = []
-        for particao, pontoCentral in zip(self.particoes, cromossomo_centroids):
-            particao.pico = pontoCentral
-            particoes.append(particao)
-        return particoes
+        index = 0
+        for particao in self.particoes:
+            tamanhoPontoCentral = len(particao.pontosCentrais)
+            p_centrais_atuais = cromossomo_centroids[index:index + tamanhoPontoCentral]
+            particao.setPontosCentrais(p_centrais_atuais)
+            index += tamanhoPontoCentral
 
     def cromossomo_para_regras(self, cromossomo_antecedentes, cromossomo_consequente, tam_antecedentes):
         regras = []
