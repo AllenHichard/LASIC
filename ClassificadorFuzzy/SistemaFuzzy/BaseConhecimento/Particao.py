@@ -24,8 +24,12 @@ class Particao:
 
     def setPontosCentrais(self, novosPontosCentrais):
         iteracaoPontos = 0
-        tam = len(self.tiposConjunto)
-        for index in range(1, tam-1):
+        tam = len(self.tiposConjunto) - 1
+        #print(self.tiposConjunto)
+        #print(self.pontosIniciais)
+        #print(self.pontosFinais)
+        index = 1
+        while index < tam:
             tipoConjunto = self.tiposConjunto[index]
             if tipoConjunto == "TRI":
                 pontoInicial = self.pontosIniciais[iteracaoPontos]
@@ -33,17 +37,29 @@ class Particao:
                 self.conjuntos[index] = fuzz.trimf(self.eixo_x, [pontoInicial, novosPontosCentrais[iteracaoPontos], pontoFinal])
                 iteracaoPontos +=1
             elif tipoConjunto == "TRAP":
-                p1 = novosPontosCentrais[iteracaoPontos]
-                p2 = novosPontosCentrais[iteracaoPontos+1]
                 pontoInicial = self.pontosIniciais[iteracaoPontos]
-                pontoFinal = self.pontosFinais[iteracaoPontos]
-                self.conjuntos[index] = [pontoInicial, p1, p2, pontoFinal]
+                p1 = novosPontosCentrais[iteracaoPontos]
+                p2 = novosPontosCentrais[iteracaoPontos + 1]
+                pontoFinal = self.pontosFinais[iteracaoPontos+1]
+                print(pontoInicial, p1, p2, pontoFinal)
+                self.conjuntos[index] = fuzz.trapmf(self.eixo_x, [pontoInicial, p1, p2, pontoFinal])
                 iteracaoPontos+=2
+                """
+                self.pontosIniciais.append(pontoInicial)
+                self.pontosCentrais.append(p1)
+                self.pontosFinais.append(p2)
+    
+                self.pontosIniciais.append(p1)
+                self.pontosCentrais.append(p2)
+                self.pontosFinais.append(pontoFinal)
+                """
+
             elif tipoConjunto == "GAUSS":
                 desvio = self.largura_base_inferior / len(self.tiposConjunto)
                 self.conjuntos[index] = fuzz.gaussmf(self.eixo_x, novosPontosCentrais[iteracaoPontos], desvio)
                 iteracaoPontos+=1
-        self.plotParticao()
+            index += 1
+        #self.plotParticao()
 
 
     def calculaParticaoTriangular(self, index):
@@ -77,9 +93,13 @@ class Particao:
         else:
             p1 = pontoInicial+self.largura_base_superior
             p2 = pontoFinal-self.largura_base_superior
-            self.pontosCentrais.append(p1)
-            self.pontosCentrais.append(p2)
+
             self.pontosIniciais.append(pontoInicial)
+            self.pontosCentrais.append(p1)
+            self.pontosFinais.append(p2)
+
+            self.pontosIniciais.append(p1)
+            self.pontosCentrais.append(p2)
             self.pontosFinais.append(pontoFinal)
             trapezio = [pontoInicial,p1,p2,pontoFinal]
         self.ponto_referencial += self.largura_base_inferior
@@ -116,12 +136,23 @@ class Particao:
 
     def calculoLimites(self):
         for index in range(1, len(self.pontosCentrais)-1):
-            self.limiteInferior.append(self.pontosCentrais[index-1])
-            self.limiteSuperior.append(self.pontosCentrais[index+1])
+            PI = self.pontosCentrais[index-1]
+            pontoMedio = self.pontosCentrais[index]
+            PS = self.pontosCentrais[index+1]
+            self.limiteInferior.append(self.lower_centroids(PI, pontoMedio))
+            self.limiteSuperior.append(self.upper_centroid(PS, pontoMedio))
         self.pontosCentrais = self.pontosCentrais[1:len(self.pontosCentrais)-1]
 
-
-
+    def lower_centroids(self, inicio, pontoMedio):
+        PI = inicio
+        PM = pontoMedio
+        vi = PM - ((PM - PI) / 2)
+        return vi
+    def upper_centroid(self, fim, pontoMedio):
+        PS = fim
+        PM = pontoMedio
+        vs = PM + ((PS - PM) / 2)
+        return vs
 
 
     def plotParticao(self):

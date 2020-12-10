@@ -174,6 +174,7 @@ class MixedIntegerFloatProblem(Problem):
         index = 0
         for particao in self.particoes:
             tamanhoPontoCentral = len(particao.pontosCentrais)
+            #print(tamanhoPontoCentral)
             p_centrais_atuais = cromossomo_centroids[index:index + tamanhoPontoCentral]
             particao.setPontosCentrais(p_centrais_atuais)
             index += tamanhoPontoCentral

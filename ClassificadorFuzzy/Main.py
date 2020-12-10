@@ -13,7 +13,7 @@ for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_
     file = open(nome_arquivo_train, "r", encoding="utf8")
     extracao_keel = LeitorKeel.LeitorKeel(file)
     extracao_keel.extracaoDados()
-    bd = BaseDados(extracao_keel.limites_inferiores_x, extracao_keel.limites_superiores_x, [1000,1000,1000,1000], [["TRAP", "TRI", "TRI", "TRAP"],["TRAP", "TRI", "TRAP"],["TRAP", "TRI", "TRAP"],["TRAP", "TRI", "TRAP"]])
+    bd = BaseDados(extracao_keel.limites_inferiores_x, extracao_keel.limites_superiores_x, [1000,1000,1000,1000], [["TRAP", "TRI",  "TRAP"],["TRAP", "TRI",  "TRAP"],["TRAP", "TRI", "TRAP"],["TRAP", "TRI", "TRAP"]])
     particoes = bd.criarParticoes()
     br = BaseRegras(particoes, extracao_keel.instancias, extracao_keel.classes)
     regras = br.getRegras()
@@ -24,6 +24,7 @@ for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_
     #particoes[2].setPontoCentral(4.2)
     #particoes[3].setPontoCentral(1.0)
     #particoes[0].plotParticao()
+    #print("a", particoes[0].pontosCentrais)
     resultadoTrain = Classificacao(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
 
     #Algoritmo Genético
