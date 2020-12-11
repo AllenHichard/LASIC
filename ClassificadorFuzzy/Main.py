@@ -18,7 +18,9 @@ for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_
     br = BaseRegras(particoes, extracao_keel.instancias, extracao_keel.classes)
     regras = br.getRegras()
     pesoHisao = PesoHisao(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
-    pesos = pesoHisao.getPesos(False)
+    pesoHisao.getPesos(False)
+    #for regra in regras:
+        #print(regra.peso)
     #particoes[0].setPontoCentral(6.7)
     #particoes[1].setPontoCentral(3.5)
     #particoes[2].setPontoCentral(4.2)
