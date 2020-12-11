@@ -3,9 +3,9 @@ import logging
 from jmetal import algorithm
 from jmetal import core
 from jmetal import operator
-from AlgoritmoGenetico.multiobjective.nsgaii import problem
+from AlgoritmoGenetico import Problema
 
-__all__ = ['core', 'algorithm', 'operator', 'problem']
+__all__ = ['core', 'algorithm', 'operator']
 
 logger = logging.getLogger('jmetal')
 logger.setLevel(logging.INFO)

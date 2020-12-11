@@ -43,7 +43,10 @@ class Classificacao:
             classe = self.agregacao_get_classe(tnorma_classe, "MAX")
             if classe == -1: classe = classeDefault
             self.resultado.append(classe)
-        return obj.Objetivos().__getAcuraciaDatasetBalanceado__(self.resultado, self.gabarito)
+        objetivos = obj.Objetivos()
+        objetivos.ACC(self.resultado, self.gabarito)
+        objetivos.interpretabilidadeRegra(self.regras, self.instancias)
+        return objetivos.acc, objetivos.interpretabilidadeRegras
 
     def tnormas_por_classe(self, tnorma, classe_ativada, tnorma_classe):
         if tnorma > 0:
