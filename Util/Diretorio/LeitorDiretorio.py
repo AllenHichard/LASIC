@@ -1,6 +1,6 @@
 import os
 
-caminhoDatasets = 'C:\\Lasic\\LASIC/dataset'
+caminhoDatasets = 'C:\\Lasic\\LASIC/Dataset'
 def datasets(treino_teste):
     """
         Esse método retorna todos os caminhos dos arquivos que contém os datasets do repositório KEEL

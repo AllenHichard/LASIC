@@ -1,11 +1,9 @@
 import random
-from math import sqrt, exp, pow, sin
-import Fitness
-from jmetal.core.problem import FloatProblem, BinaryProblem, Problem
-from jmetal.core.solution import FloatSolution, BinarySolution, CompositeSolution, IntegerSolution
-from Reducao_Regras import Reducao
-from ClassificadorFuzzy.Model.Regra import Regra
-from ClassificadorFuzzy.SistemaFuzzy.Raciocinio.Geral import Classificacao
+from jmetal.core.problem import Problem
+from jmetal.core.solution import FloatSolution, CompositeSolution, IntegerSolution
+from AlgoritmoGenetico.Reducao_Regras import Reducao
+from SistemaFuzzy.Model.Regra import Regra
+from SistemaFuzzy.Raciocinio.Geral import Classificacao
 """
 .. module:: constrained
    :platform: Unix, Windows
@@ -13,8 +11,6 @@ from ClassificadorFuzzy.SistemaFuzzy.Raciocinio.Geral import Classificacao
 
 .. moduleauthor:: Antonio J. Nebro <antonio@lcc.uma.es>
 """
-import itertools
-
 
 """from Config import ParametrosJSON as json
 inputs = json.getArcEntrada()

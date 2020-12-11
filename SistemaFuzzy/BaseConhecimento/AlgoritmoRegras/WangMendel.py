@@ -1,23 +1,25 @@
 import numpy as np
-from ClassificadorFuzzy.Model import Regra
-import random
+from SistemaFuzzy.Model import Regra
 
-class Aleatorio:
 
-    def __init__(self, particoes, instancias, classes):
+class WangMendel:
+
+    def __init__(self, particoes, instancias):
         self.particoes = particoes
         self.instancias = instancias
         self.regras = []
-        self.tnormas = []
-        self.classes = classes
 
-    def aleatorio(self):
-        for _ in self.instancias:
+    def wangMendel(self):
+        for instancia in self.instancias:
             antecedentes = []
-            for posicao_antecedente, particao in enumerate(self.particoes):
-                antecedentes.append(random.randint(0, len(particao.conjuntos)-1))
-            consequente = random.randint(0, len(self.classes)-1)
-            regra = Regra.Regra(antecedentes, consequente, 1)
+            consequente = instancia.classe
+            pertinencias_maximas = []
+            for atributo, particao in zip(instancia.caracteristicas, self.particoes):
+                conjuntoAtivado, pertinenciaMax = particao.getPertinenciaConjuntos(atributo)
+                antecedentes.append(conjuntoAtivado)
+                pertinencias_maximas.append(pertinenciaMax)
+            tnorma = np.prod(pertinencias_maximas)
+            regra = Regra.Regra(antecedentes, consequente, tnorma)
             self.atualizarRegras(regra)
         return self.regras
 
@@ -31,7 +33,7 @@ class Aleatorio:
 
     def inconsistencia(self,novaRegra):
         for index, r in enumerate(self.regras):
-            if r.__eq__(novaRegra):
+            if r.eq_antecedentes(novaRegra):
                 return index, True
         return -1, False
 

@@ -1,9 +1,5 @@
-import numpy as np
-import skfuzzy as fuzz
-from ClassificadorFuzzy.Model import Regra
-from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.BaseDados import BaseDados as bd
-from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.AlgoritmoRegras.WangMendel import WangMendel
-from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.AlgoritmoRegras.Aleatorio import Aleatorio
+from SistemaFuzzy.BaseConhecimento.AlgoritmoRegras.WangMendel import WangMendel
+from SistemaFuzzy.BaseConhecimento.AlgoritmoRegras.Aleatorio import Aleatorio
 
 
 class BaseRegras:

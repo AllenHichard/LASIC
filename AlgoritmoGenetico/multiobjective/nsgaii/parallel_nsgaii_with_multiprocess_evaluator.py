@@ -1,6 +1,6 @@
 from jmetal.algorithm.multiobjective.nsgaii import NSGAII
 from jmetal.operator import SBXCrossover, PolynomialMutation
-from jmetal.problem.multiobjective.zdt import ZDT1Modified
+from AlgoritmoGenetico.multiobjective.nsgaii.problem import ZDT1Modified
 from jmetal.util.evaluator import MultiprocessEvaluator
 from jmetal.util.solution import print_function_values_to_file, print_variables_to_file
 from jmetal.util.termination_criterion import StoppingByEvaluations

@@ -1,6 +1,5 @@
 import numpy as np
-import skfuzzy as fuzz
-from ClassificadorFuzzy.Model import Regra
+
 
 class Reducao:
 

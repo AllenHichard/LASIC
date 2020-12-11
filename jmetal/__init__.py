@@ -3,7 +3,7 @@ import logging
 from jmetal import algorithm
 from jmetal import core
 from jmetal import operator
-from jmetal import problem
+from AlgoritmoGenetico.multiobjective.nsgaii import problem
 
 __all__ = ['core', 'algorithm', 'operator', 'problem']
 

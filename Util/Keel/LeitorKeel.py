@@ -1,4 +1,4 @@
-from ClassificadorFuzzy.Model import Instancia
+from SistemaFuzzy.Model import Instancia
 import re
 
 class LeitorKeel:
@@ -65,7 +65,7 @@ class LeitorKeel:
 
 
 """
-file = open("C:\\Lasic\\LASIC/dataset/iris-10-fold/iris-10-1tra.dat", "r", encoding="utf8")
+file = open("C:\\Lasic\\LASIC/Dataset/iris-10-fold/iris-10-1tra.dat", "r", encoding="utf8")
 keel = LeitorKeel(file)
 keel.extracaoDados()
 keel.printInstancias()

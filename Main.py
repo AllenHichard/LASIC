@@ -1,10 +1,10 @@
-from ClassificadorFuzzy.Diretorio import LeitorDiretorio
-from ClassificadorFuzzy.Keel import LeitorKeel
-from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.BaseDados import BaseDados
-from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.BaseRegras import BaseRegras
-from ClassificadorFuzzy.SistemaFuzzy.Raciocinio.Geral import Classificacao
-from ClassificadorFuzzy.SistemaFuzzy.BaseConhecimento.AlgoritmoPesos.HisaoIshibuchi import PesoHisao
-from examples.multiobjective.nsgaii import nsgaii_fuzzy as nsgaii
+from Util.Diretorio import LeitorDiretorio
+from Util.Keel import LeitorKeel
+from SistemaFuzzy.BaseConhecimento.BaseDados import BaseDados
+from SistemaFuzzy.BaseConhecimento.BaseRegras import BaseRegras
+from SistemaFuzzy.Raciocinio.Geral import Classificacao
+from SistemaFuzzy.BaseConhecimento.AlgoritmoPesos.HisaoIshibuchi import PesoHisao
+from AlgoritmoGenetico.multiobjective.nsgaii import main_nsgaii_fuzzy as nsgaii
 
 arquivos_treinamento = LeitorDiretorio.datasets("tra")
 arquivos_teste = LeitorDiretorio.datasets("tst")
