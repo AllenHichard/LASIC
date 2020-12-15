@@ -41,7 +41,7 @@ class Particao:
                 p1 = novosPontosCentrais[iteracaoPontos]
                 p2 = novosPontosCentrais[iteracaoPontos + 1]
                 pontoFinal = self.pontosFinais[iteracaoPontos+1]
-                print(pontoInicial, p1, p2, pontoFinal)
+                #print(pontoInicial, p1, p2, pontoFinal)
                 self.conjuntos[index] = fuzz.trapmf(self.eixo_x, [pontoInicial, p1, p2, pontoFinal])
                 iteracaoPontos+=2
                 """
@@ -53,13 +53,12 @@ class Particao:
                 self.pontosCentrais.append(p2)
                 self.pontosFinais.append(pontoFinal)
                 """
-
             elif tipoConjunto == "GAUSS":
                 desvio = self.largura_base_inferior / len(self.tiposConjunto)
                 self.conjuntos[index] = fuzz.gaussmf(self.eixo_x, novosPontosCentrais[iteracaoPontos], desvio)
                 iteracaoPontos+=1
             index += 1
-        #self.plotParticao()
+        self.plotParticao()
 
 
     def calculaParticaoTriangular(self, index):
@@ -108,6 +107,7 @@ class Particao:
     def calcularParticaoGaussiana(self, index):
         pontoMedio = self.ponto_referencial + self.largura_base_inferior
         self.ponto_referencial += self.largura_base_inferior
+        #desvio = self.largura_base_inferior / len(self.tiposConjunto)
         desvio = self.largura_base_inferior / len(self.tiposConjunto)
         if index == 0:
             self.pontosCentrais.append(self.inicio)
