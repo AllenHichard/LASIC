@@ -13,7 +13,7 @@ for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_
     file = open(nome_arquivo_train, "r", encoding="utf8")
     extracao_keel = LeitorKeel.LeitorKeel(file)
     extracao_keel.extracaoDados()
-    bd = BaseDados(extracao_keel.limites_inferiores_x, extracao_keel.limites_superiores_x, [1000,1000,1000,1000], [["TRAP", "TRI", "TRAP"],["TRAP", "TRAP", "TRAP", "TRAP"],["TRAP", "TRI", "GAUSS","TRI"],["TRAP","GAUSS", "TRAP"]])
+    bd = BaseDados(extracao_keel.limites_inferiores_x, extracao_keel.limites_superiores_x, [1000,1000,1000,1000], [["GAUSS", "GAUSS","GAUSS","GAUSS","GAUSS", "GAUSS", "GAUSS"],["GAUSS", "GAUSS","GAUSS", "GAUSS", "GAUSS"],["GAUSS", "GAUSS", "GAUSS"],["GAUSS","GAUSS"]])
     particoes = bd.criarParticoes()
     br = BaseRegras(particoes, extracao_keel.instancias, extracao_keel.classes)
     regras = br.getRegras("Wang-Mendel")
@@ -30,7 +30,7 @@ for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_
     resultadoTrain = Classificacao(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
 
     #Algoritmo Genético
-    nsgaii.nsgaii_train(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
+    #nsgaii.nsgaii_train(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
 
     #Teste
     file = open(nome_arquivo_test, "r", encoding="utf8")
