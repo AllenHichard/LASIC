@@ -10,11 +10,11 @@ from jmetal.util.termination_criterion import StoppingByEvaluations
 def nsgaii_train(particoes, regras, instancias, classes):
     problem = MixedIntegerFloatProblem(particoes, regras, instancias, classes)
 
-    max_evaluations = 10000
+    max_evaluations = 1000
     algorithm = NSGAII(
         problem=problem,
-        population_size=10,
-        offspring_population_size=10,
+        population_size=100,
+        offspring_population_size=100,
         mutation=CompositeMutation([IntegerPolynomialMutation(0.05, 20),
                                     IntegerPolynomialMutation(0.05, 20),
                                     PolynomialMutation(0.05, 20.0)]),
@@ -34,3 +34,25 @@ def nsgaii_train(particoes, regras, instancias, classes):
     print('Algorithm (continuous problem): ' + algorithm.get_name())
     print('Problem: ' + problem.get_name())
     print('Computing time: ' + str(algorithm.total_computing_time))
+
+    minAcuracia = 0
+    index = -1
+    for i, f in enumerate(front):
+        if minAcuracia > f.objectives[0]:
+            minAcuracia =  f.objectives[0]
+            index = i
+
+    #for variable in front[index].variables:
+       #print(variable.variables)
+
+
+    particoes = problem.alterar_centroids(front[index].variables[2].variables)
+    new_regras = problem.cromossomo_para_regras(front[index].variables[0].variables, front[index].variables[1].variables, problem.semente.qtdAntecedenteRegra, particoes)
+    return particoes, new_regras
+
+    #for i in particoes:
+        #print(i.plotParticao())
+
+
+
+

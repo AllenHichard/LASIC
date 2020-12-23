@@ -25,6 +25,7 @@ class Particao:
         self.limiteInferior = []
 
     def setPontosCentrais(self, novosPontosCentrais):
+        self.pontosCentrais = novosPontosCentrais
         iteracaoPontos = 0
         tam = len(self.tiposConjunto) - 1
         # print(self.tiposConjunto)

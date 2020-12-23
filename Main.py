@@ -12,31 +12,41 @@ arquivos_teste = LeitorDiretorio.datasets("tst")
 for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_teste):
     #Semente
     file = open(nome_arquivo_train, "r", encoding="utf8")
-    extracao_keel = LeitorKeel.LeitorKeel(file)
-    extracao_keel.extracaoDados()
-    default = parametros.Default(extracao_keel.qtdCaracteristicas)
-    bd = BaseDados(extracao_keel.limites_inferiores_x, extracao_keel.limites_superiores_x, default.discretizacoes, default.particoes )
+    extracao_keel_train = LeitorKeel.LeitorKeel(file)
+    extracao_keel_train.extracaoDados()
+    default = parametros.Default(extracao_keel_train.qtdCaracteristicas)
+    bd = BaseDados(extracao_keel_train.limites_inferiores_x, extracao_keel_train.limites_superiores_x, default.discretizacoes, default.particoes )
     particoes = bd.criarParticoes()
-    br = BaseRegras(particoes, extracao_keel.instancias, extracao_keel.classes)
-    regras = br.getRegras("Wang-Mendel")
-    pesoHisao = PesoHisao(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
+    br = BaseRegras(particoes, extracao_keel_train.instancias, extracao_keel_train.classes)
+    regras = br.getRegras() #"Wang-Mendel"
+    pesoHisao = PesoHisao(particoes, regras, extracao_keel_train.instancias, extracao_keel_train.classes)
     pesoHisao.getPesos(False)
-    #for regra in regras:
-        #print(regra.peso)
-    #particoes[0].setPontoCentral(6.7)
-    #particoes[1].setPontoCentral(3.5)
-    #particoes[2].setPontoCentral(4.2)
-    #particoes[3].setPontoCentral(1.0)
-    #particoes[0].plotParticao()
-    #print("a", particoes[0].pontosCentrais)
-    resultadoTrain = Classificacao(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
 
-    #Algoritmo Genético
-    #nsgaii.nsgaii_train(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
+    # Algoritmo Genético
+    particoesAG, regrasAG = nsgaii.nsgaii_train(particoes.copy(), regras.copy(), extracao_keel_train.instancias,
+                                                extracao_keel_train.classes)
 
-    #Teste
     file = open(nome_arquivo_test, "r", encoding="utf8")
-    extracao_keel = LeitorKeel.LeitorKeel(file)
-    extracao_keel.extracaoDados()
-    resultadoTeste = Classificacao(particoes, regras, extracao_keel.instancias, extracao_keel.classes)
-    print(resultadoTrain.classificar(), resultadoTeste.classificar())
+    extracao_keel_test = LeitorKeel.LeitorKeel(file)
+    extracao_keel_test.extracaoDados()
+
+    resultadoTrainSAG = Classificacao(particoes, regras, extracao_keel_train.instancias, extracao_keel_train.classes)
+    resultadoTesteSAG = Classificacao(particoes, regras, extracao_keel_test.instancias, extracao_keel_test.classes)
+
+
+
+    resultadoTrainCAG = Classificacao(particoesAG, regrasAG, extracao_keel_train.instancias,
+                                      extracao_keel_train.classes)
+    resultadoTesteCAG = Classificacao(particoesAG, regrasAG, extracao_keel_test.instancias, extracao_keel_test.classes)
+
+    print("Resultados Finais Sem AG")
+    print(resultadoTrainSAG.classificar(), resultadoTesteSAG.classificar()[0])
+    print("Resultados Finais Com AG")
+    print(resultadoTrainCAG.classificar(), resultadoTesteCAG.classificar()[0])
+
+
+
+
+
+
+

@@ -5,6 +5,7 @@ from AlgoritmoGenetico.Problema.Reducao_Regras import Reducao
 from SistemaFuzzy.Model.Regra import Regra
 from SistemaFuzzy.Raciocinio.Geral import Classificacao
 from AlgoritmoGenetico.Problema.Semente import Semente
+from copy import copy
 
 class MixedIntegerFloatProblem(Problem):
     def __init__(self, particoes, regras, instancias, classes): # CONFIGURACAO DO PROBLEMA
@@ -27,17 +28,13 @@ class MixedIntegerFloatProblem(Problem):
         self.int_lower_bound_label = [0 for _ in range(tamanho_consequentes)]
         self.int_upper_bound_label = [len(classes) - 1 for _ in range(tamanho_consequentes)]
 
-
         #VALORES JMETAL
         self.number_of_objectives = 2
         self.number_of_variables = 3
         self.number_of_constraints = 0
         self.obj_directions = [self.MINIMIZE]
         self.obj_labels = ['Ones']
-
-        #TESTAR EVOLUÇÂO
-        self.maiorInterpretabilidade = 0
-        self.maiorAcuracia = 0
+        self.controle = 1
 
     def create_solution(self) -> CompositeSolution: # INICIALIZAÇÂO DO PROBLEMA
         attributes_solution = IntegerSolution(self.int_lower_bound_attribute, self.int_upper_bound_attribute,
@@ -73,43 +70,33 @@ class MixedIntegerFloatProblem(Problem):
 
     def alterar_centroids(self, cromossomo_centroids):
         index = 0
+        particoes = []
         for particao in self.particoes:
+            particao = copy(particao)
             tamanhoPontoCentral = len(particao.pontosCentrais)
             p_centrais_atuais = cromossomo_centroids[index:index + tamanhoPontoCentral]
             particao.setPontosCentrais(p_centrais_atuais)
             index += tamanhoPontoCentral
+            particoes.append(particao)
+        return particoes
 
-    def cromossomo_para_regras(self, cromossomo_antecedentes, cromossomo_consequente, tam_antecedentes):
+    def cromossomo_para_regras(self, cromossomo_antecedentes, cromossomo_consequente, tam_antecedentes, particoes):
         regras = []
         for index_classe, salto in enumerate(range(0, len(cromossomo_antecedentes), tam_antecedentes)):
             antecedentes = cromossomo_antecedentes[salto:salto+tam_antecedentes]
             consequente = cromossomo_consequente[index_classe]
             regra = Regra(antecedentes, consequente, 0)
             regras.append(regra)
-        return Reducao(regras, self.instancias, self.particoes).reduzir()
+        return Reducao(regras, self.instancias, particoes).reduzir()
 
     def evaluate(self, solution: CompositeSolution) -> CompositeSolution:
         antecedentes = solution.variables[0].variables
         consequentes = solution.variables[1].variables
         centroides = solution.variables[2].variables
-
-        new_regras = self.cromossomo_para_regras(antecedentes, consequentes, self.semente.qtdAntecedenteRegra)
-        self.alterar_centroids(centroides)
-        classificacao = Classificacao(self.particoes, new_regras, self.instancias, self.classes)
-        #interpretabilidade calculada a partir da quantidade de regras
-        #interpretabilidadeRegras = (1 - len(new_regras) / len(self.instancias))
-
-        #interpretabilidade calculada a paritr da quantidade de antecedentes/condições em cada regra
+        particoes = self.alterar_centroids(centroides)
+        new_regras = self.cromossomo_para_regras(antecedentes, consequentes, self.semente.qtdAntecedenteRegra, particoes)
+        classificacao = Classificacao(particoes, new_regras, self.instancias, self.classes)
         acuracia, interpretabilidadeCondicoes = classificacao.classificar()
-        #APENAS PARA SINALIZAR A EVOLUÇÂO
-        if (acuracia > self.maiorAcuracia):
-            self.maiorAcuracia = acuracia
-            self.maiorInterpretabilidade = interpretabilidadeCondicoes
-            print("evolução acc: ", acuracia, "evolução inter: ", len(new_regras), self.maiorInterpretabilidade)
-        if acuracia >= self.maiorAcuracia and interpretabilidadeCondicoes > self.maiorInterpretabilidade:
-            self.maiorInterpretabilidade = interpretabilidadeCondicoes
-            print("evolução acc: ", acuracia, "evolução inter: ", len(new_regras), self.maiorInterpretabilidade)
-
         solution.objectives[0] = -acuracia
         solution.objectives[1] = -interpretabilidadeCondicoes
         return solution

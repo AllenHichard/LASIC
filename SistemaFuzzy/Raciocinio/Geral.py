@@ -25,6 +25,7 @@ class Classificacao:
     def classificar(self):
         dontcare = -1
         classeDefault = self.classeDefaut()
+
         for instancia in self.instancias:
             tnorma_classe = []
             self.gabarito.append(instancia.classe)
