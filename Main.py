@@ -5,6 +5,7 @@ from SistemaFuzzy.BaseConhecimento.BaseRegras import BaseRegras
 from SistemaFuzzy.Raciocinio.Geral import Classificacao
 from SistemaFuzzy.BaseConhecimento.AlgoritmoPesos.HisaoIshibuchi import PesoHisao
 from AlgoritmoGenetico import main_nsgaii_fuzzy as nsgaii
+import parametros
 
 arquivos_treinamento = LeitorDiretorio.datasets("tra")
 arquivos_teste = LeitorDiretorio.datasets("tst")
@@ -13,7 +14,8 @@ for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_
     file = open(nome_arquivo_train, "r", encoding="utf8")
     extracao_keel = LeitorKeel.LeitorKeel(file)
     extracao_keel.extracaoDados()
-    bd = BaseDados(extracao_keel.limites_inferiores_x, extracao_keel.limites_superiores_x, [1000,1000,1000,1000], [["GAUSS", "GAUSS","GAUSS","GAUSS","GAUSS", "GAUSS", "GAUSS"],["GAUSS", "GAUSS","GAUSS", "GAUSS", "GAUSS"],["GAUSS", "GAUSS", "GAUSS"],["GAUSS","GAUSS"]])
+    default = parametros.Default(extracao_keel.qtdCaracteristicas)
+    bd = BaseDados(extracao_keel.limites_inferiores_x, extracao_keel.limites_superiores_x, default.discretizacoes, default.particoes )
     particoes = bd.criarParticoes()
     br = BaseRegras(particoes, extracao_keel.instancias, extracao_keel.classes)
     regras = br.getRegras("Wang-Mendel")

@@ -61,7 +61,7 @@ class Particao:
                 self.conjuntos[index] = fuzz.gaussmf(self.eixo_x, novosPontosCentrais[iteracaoPontos], desvio)
                 iteracaoPontos += 1
             index += 1
-        self.plotParticao()
+        #self.plotParticao()
 
     def calculaParticaoTriangular(self, index):
         pontoInicial = self.ponto_referencial
@@ -138,7 +138,7 @@ class Particao:
             elif tipoConjunto == "GAUSS":
                 self.conjuntos.append(self.calcularParticaoGaussiana(index))
         self.calculoLimites()
-        self.plotParticao()
+        #self.plotParticao()
         return self.conjuntos
 
     def calculoLimites(self):
