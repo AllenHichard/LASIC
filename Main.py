@@ -10,10 +10,17 @@ import parametros
 arquivos_treinamento = LeitorDiretorio.datasets("tra")
 arquivos_teste = LeitorDiretorio.datasets("tst")
 for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_teste):
-    #Semente
-    file = open(nome_arquivo_train, "r", encoding="utf8")
-    extracao_keel_train = LeitorKeel.LeitorKeel(file)
+    #Leitura DataSets Treinamento
+    treinamento = open(nome_arquivo_train, "r", encoding="utf8")
+    extracao_keel_train = LeitorKeel.LeitorKeel(treinamento)
     extracao_keel_train.extracaoDados()
+
+    # Leitura DataSets Teste
+    teste = open(nome_arquivo_test, "r", encoding="utf8")
+    extracao_keel_test = LeitorKeel.LeitorKeel(teste)
+    extracao_keel_test.extracaoDados()
+
+    #Semente
     default = parametros.Default(extracao_keel_train.qtdCaracteristicas)
     bd = BaseDados(extracao_keel_train.limites_inferiores_x, extracao_keel_train.limites_superiores_x, default.discretizacoes, default.particoes )
     particoes = bd.criarParticoes()
@@ -22,21 +29,13 @@ for nome_arquivo_train, nome_arquivo_test in zip(arquivos_treinamento, arquivos_
     pesoHisao = PesoHisao(particoes, regras, extracao_keel_train.instancias, extracao_keel_train.classes)
     pesoHisao.getPesos(False)
 
-    # Algoritmo Genético
-    particoesAG, regrasAG = nsgaii.nsgaii_train(particoes.copy(), regras.copy(), extracao_keel_train.instancias,
-                                                extracao_keel_train.classes)
-
-    file = open(nome_arquivo_test, "r", encoding="utf8")
-    extracao_keel_test = LeitorKeel.LeitorKeel(file)
-    extracao_keel_test.extracaoDados()
-
+    #Classificação Sem AG
     resultadoTrainSAG = Classificacao(particoes, regras, extracao_keel_train.instancias, extracao_keel_train.classes)
     resultadoTesteSAG = Classificacao(particoes, regras, extracao_keel_test.instancias, extracao_keel_test.classes)
 
-
-
-    resultadoTrainCAG = Classificacao(particoesAG, regrasAG, extracao_keel_train.instancias,
-                                      extracao_keel_train.classes)
+    # Algoritmo Genético MultiObjetivo
+    particoesAG, regrasAG = nsgaii.nsgaii_train(particoes.copy(), regras.copy(), extracao_keel_train.instancias, extracao_keel_train.classes)
+    resultadoTrainCAG = Classificacao(particoesAG, regrasAG, extracao_keel_train.instancias,extracao_keel_train.classes)
     resultadoTesteCAG = Classificacao(particoesAG, regrasAG, extracao_keel_test.instancias, extracao_keel_test.classes)
 
     print("Resultados Finais Sem AG")

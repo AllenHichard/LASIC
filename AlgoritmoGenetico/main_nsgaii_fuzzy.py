@@ -10,11 +10,11 @@ from jmetal.util.termination_criterion import StoppingByEvaluations
 def nsgaii_train(particoes, regras, instancias, classes):
     problem = MixedIntegerFloatProblem(particoes, regras, instancias, classes)
 
-    max_evaluations = 1000
+    max_evaluations = 10
     algorithm = NSGAII(
         problem=problem,
-        population_size=100,
-        offspring_population_size=100,
+        population_size=10,
+        offspring_population_size=10,
         mutation=CompositeMutation([IntegerPolynomialMutation(0.05, 20),
                                     IntegerPolynomialMutation(0.05, 20),
                                     PolynomialMutation(0.05, 20.0)]),
